@@ -35,9 +35,16 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
     itrial <- as.integer(as.factor(factor))
   }
   
-  # Checking validity of a binocular option, if data is binocular
-  if ((ncol(x) == 2) & (!(binocular %in% c("cyclopean", "independent", "merge")))) {
-    stop ('Unknown binocular option. Must be "cyclopean", "independent", or "merge".')
+  # Binocular data, checks and optional preprocessing.
+  if ((ncol(x) == 2)) {
+    # Checking validity of a binocular option, if data is binocular
+    if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "independent", or "merge".')
+    
+    # Special case, cyclopean data via averaging
+    if (binocular == "cyclopean") {
+      x <- matrix(rowMeans(x))
+      y <- matrix(rowMeans(y))
+    }
   }
   
 }
