@@ -18,9 +18,9 @@
 #' @examples
 extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = "merge", trial = NULL, options = list()){
   # Converting x and y to matrices, so we can treat monocular and binocular cases similarly.
-  if (is.vector(x)) x <- matrix(x)
-  if (is.vector(y)) y <- matrix(y)
-  
+  x <- input_to_matrix(x)
+  y <- input_to_matrix(y)
+
   # Checking that matrices dimensions match and are valid.
   if (all(dim(x) == dim(y))) stop("Dimensions for x and y do not match.")
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be a vector or a two-column matrix.")
@@ -42,8 +42,8 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
     
     # Special case, cyclopean data via averaging
     if (binocular == "cyclopean") {
-      x <- matrix(rowMeans(x))
-      y <- matrix(rowMeans(y))
+      x <- as.matrix(rowMeans(x))
+      y <- as.matrix(rowMeans(y))
     }
   }
   
