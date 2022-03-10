@@ -8,11 +8,11 @@
 #' 
 #' @param x Vector of coordinates
 #' @param trial Vector with trial labels, so that velocity is computed only within trials.
-#' @param vel_window_in_samples Width of velocity computation in samples.
-#' @param frame_duration Duration of a single frame (1 / sampling rate).
+#' @param time_window_in_samples Width of window for velocity computation in samples.
+#' @param delta_t Duration of a single frame (1 / sampling rate).
 #' 
 #' @return Velocity vector
-compute_velocity_ek <- function(x, trial, vel_window_in_samples, frame_duration) {
-    .Call(`_saccadr_compute_velocity_ek`, x, trial, vel_window_in_samples, frame_duration)
+compute_velocity_ek <- function(x, trial, time_window_in_samples, delta_t) {
+    .Call(`_saccadr_compute_velocity_ek`, x, trial, time_window_in_samples, delta_t)
 }
 
