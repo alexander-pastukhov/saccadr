@@ -17,5 +17,27 @@
 #'
 #' @examples
 extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = "merge", trial = NULL, options = list()){
+  # Converting x and y to matrices, so we can treat monocular and binocular cases similarly.
+  if (is.vector(x)) x <- matrix(x)
+  if (is.vector(y)) y <- matrix(y)
+  
+  # Checking that matrices dimensions match and are valid.
+  if (all(dim(x) == dim(y))) stop("Dimensions for x and y do not match.")
+  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be a vector or a two-column matrix.")
+  
+  # Checking trial information
+  if (!is.null(trial)) {
+    # All samples belong to the same trial.
+    itrial <- rep(1, nrow(x))
+  } else {
+    if (length(trial) != nrow(x)) stop("Dimensions for x/y and trial do not match.")
+    # converting to an integer via factor for consistency
+    itrial <- as.integer(as.factor(factor))
+  }
+  
+  # Checking validity of a binocular option, if data is binocular
+  if ((ncol(x) == 2) & (!(binocular %in% c("cyclopean", "independent", "merge")))) {
+    stop ('Unknown binocular option. Must be "cyclopean", "independent", or "merge".')
+  }
   
 }
