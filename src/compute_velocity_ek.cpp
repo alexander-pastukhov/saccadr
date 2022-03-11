@@ -14,6 +14,7 @@ using namespace Rcpp;
 //' @param delta_t Duration of a single frame (1 / sampling rate).
 //' 
 //' @return Velocity vector
+//' @export
 // [[Rcpp::export]]
 NumericVector compute_velocity_ek(NumericVector x, IntegerVector trial, int time_window_in_samples, float delta_t){
   // Compute total weight for velocity normalization.

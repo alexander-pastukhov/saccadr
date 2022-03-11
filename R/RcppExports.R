@@ -12,7 +12,8 @@
 #' @param delta_t Duration of a single frame (1 / sampling rate).
 #' 
 #' @return Velocity vector
+#' @export
 compute_velocity_ek <- function(x, trial, time_window_in_samples, delta_t) {
-    .Call(`_saccadr_compute_velocity_ek`, x, trial, time_window_in_samples, delta_t)
+    .Call('_saccadr_compute_velocity_ek', PACKAGE = 'saccadr', x, trial, time_window_in_samples, delta_t)
 }
 
