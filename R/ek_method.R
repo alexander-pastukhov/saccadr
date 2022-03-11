@@ -27,7 +27,7 @@
 #'
 #' @return \code{data.frame}
 #' @export
-#' @importFrom dplyr %>% mutate filter select relocate rowwise
+#' @importFrom dplyr %>% mutate filter select relocate rowwise n
 #'
 #' @examples
 extract_ms_ek <- function(x,
@@ -53,7 +53,7 @@ extract_ms_ek <- function(x,
   if (time_window_in_samples < 3) time_window_in_samples <- 3
 
   # do we have trial information? If not, all samples are from the same trial.
-  if (is.null(trial)) trial= rep(1, length(time))
+  if (is.null(trial)) trial <- rep(1, length(x))
 
   # check that dimensions actually match, raises an error, if that is not the case.
   check_that_lengths_match(list(x, y, trial))
@@ -92,7 +92,7 @@ extract_ms_ek <- function(x,
                IsAboveThreshold = thresholded_periods$values) %>%
     
     # computing timing of each period
-    dplyr::mutate(OnsetSample = c(1, 1 + cumsum(DurationInSamples[1:(n()-1)])),
+    dplyr::mutate(OnsetSample = c(1, 1 + cumsum(DurationInSamples[1:(dplyr::n()-1)])),
                   OffsetSample = cumsum(DurationInSamples),
                   DurationMS = DurationInSamples * delta_t_ms) %>%
 
