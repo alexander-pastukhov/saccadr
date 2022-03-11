@@ -39,3 +39,9 @@ microsaccade).}
 \description{
 Extracts microsaccades from samples using one of the implemented algorithms.
 }
+\examples{
+data(single_trial)
+
+# extract microsaccades from a single trial data using the default method
+ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
+}

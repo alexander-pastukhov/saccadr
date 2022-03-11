@@ -16,6 +16,10 @@
 #' @export
 #'
 #' @examples
+#' data(single_trial)
+#' 
+#' # extract microsaccades from a single trial data using the default method
+#' ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
 extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = "merge", trial = NULL, options = list()){
   # Converting x and y to matrices, so we can treat monocular and binocular cases similarly.
   x <- input_to_matrix(x)
