@@ -5,7 +5,7 @@
 #' @param sample_rate Sampling rate in Hz.
 #' @param method A string with a method name. Currently implemented are Engbret & Kliegl (2003) (\code{"ek"}, default).
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
-#' converted to an average cyclopean image before microsaccades are extracted), \code{"independent"} (microsaccades
+#' converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
 #' are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
 #' independently but microsaccades from different eyes that temporally overlap are averaged into a binocular
 #' microsaccade).
@@ -23,7 +23,11 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
 
   # Checking that matrices dimensions match and are valid.
   if (all(dim(x) == dim(y))) stop("Dimensions for x and y do not match.")
-  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be a vector or a two-column matrix.")
+  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectord or two-column matrices.")
+  
+  # Checking method.
+  supported_methods <- list("ek" = saccadr::extract_ms_ek)
+  if (!(method %in% names(supported_methods))) stop("Unknown method.")
   
   # Checking trial information
   if (!is.null(trial)) {
@@ -37,14 +41,40 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
   
   # Binocular data, checks and optional preprocessing.
   if ((ncol(x) == 2)) {
-    # Checking validity of a binocular option, if data is binocular
-    if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "independent", or "merge".')
+    # Checking validity of a binocular option.
+    if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "monocular", or "merge".')
     
-    # Special case, cyclopean data via averaging
+    # Special case, cyclopean data via averaging.
     if (binocular == "cyclopean") {
       x <- as.matrix(rowMeans(x))
       y <- as.matrix(rowMeans(y))
     }
   }
   
+  # Computing saccades for one (monocular or cyclopean) eye at a time
+  saccades <- data.frame()
+  for(iEye in 1:ncol(x)) {
+    # turning options into parameters passed via do.call
+    call_arguments <- c(list(x = x[, iEye], y = y[, iEye], sample_rate = sample_rate, trial = trial), options)
+    
+    # extract saccades via the requested method
+    eye_saccades <- do.call(supported_methods[[method]], call_arguments)
+    
+    # eye label  
+    if (ncol(x) == 1) {
+      eye_saccades$Eye <- "Cyclopean"
+    } else {
+      eye_saccades$Eye <- c("Left", "Right")[iEye]
+    }
+    
+    # adding to the overall table
+    saccades <- rbind(saccades, eye_saccades)
+  }
+  
+  # Post-processing
+  if (ncol(x) == 2 & binocular == "merge") {
+    # TODO: merger
+  }
+  
+  saccades
 }
