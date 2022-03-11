@@ -26,7 +26,7 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
   y <- input_to_matrix(y)
 
   # Checking that matrices dimensions match and are valid.
-  if (all(dim(x) == dim(y))) stop("Dimensions for x and y do not match.")
+  if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectord or two-column matrices.")
   
   # Checking method.
@@ -34,7 +34,7 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
   if (!(method %in% names(supported_methods))) stop("Unknown method.")
   
   # Checking trial information
-  if (!is.null(trial)) {
+  if (is.null(trial)) {
     # All samples belong to the same trial.
     itrial <- rep(1, nrow(x))
   } else {
