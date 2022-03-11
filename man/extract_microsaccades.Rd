@@ -24,7 +24,7 @@ extract_microsaccades(
 \item{method}{A string with a method name. Currently implemented are Engbret & Kliegl (2003) (\code{"ek"}, default).}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
-converted to an average cyclopean image before microsaccades are extracted), \code{"independent"} (microsaccades
+converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
 are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
 independently but microsaccades from different eyes that temporally overlap are averaged into a binocular
 microsaccade).}
