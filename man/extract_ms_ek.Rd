@@ -9,10 +9,10 @@ extract_ms_ek(
   y,
   sample_rate,
   trial = NULL,
-  velocity_time_window = 10,
+  velocity_time_window = 20,
   velocity_threshold = 6,
   sd_fun = sd_via_median_estimator,
-  minimal_duration_ms = 6,
+  minimal_duration_ms = 12,
   minimal_separation_ms = 0
 )
 }
