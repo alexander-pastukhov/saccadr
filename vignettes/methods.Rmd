@@ -1,0 +1,57 @@
+---
+title: "Methods"
+output: rmarkdown::html_vignette
+bibliography: methods.bib 
+vignette: >
+  %\VignetteIndexEntry{Methods}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+# library(saccadr)
+```
+
+## "ek": Engberg and Kliegl (2003)
+
+Below is a brief description of the method as implemented in the package, please refer to @EngbertKliegl2003 for rationale and further details.
+
+1. Compute horizontal and vertical velocity components ($v_x$ and $v_y$), see [details](#ek-vel) below.
+2. Compute standard deviation for velocity components ($\sigma_x$ and $\sigma_y$), see [details](#ek-sd) below.
+3. Normalize velocity components so that they are in the units of velocity threshold $\lambda \cdot \ \sigma_{x/y}$, where by default $\lambda=6$ (`velocity_threshold` parameter): $v_{nx/ny} = \frac{v_{x/y}}{\lambda \cdot \ \sigma_{x/y}}$.
+4. Compute normalized velocity $v_n = \sqrt{v_{nx}^2 + v_{ny}^2}$.
+5. Flag samples that exceed threshold velocity $v_n > 1$.
+6. Flag consecutive sequences of above-threshold samples as potential saccades.
+7. Merge potential saccades that are less than `minimal_separation_ms` milliseconds apart. Note that this step is optional as it was _not used_ in @EngbertKliegl2003. Therefore by default `minimal_separation_ms = 0`, so no merging is performed.
+8. Drop any potential saccades that are shorter than `minimal_duration_ms` milliseconds long. This parameter defaults to `minimal_duration_ms = 12` to match minimal duration of 3 samples (each 4 ms long) used in @EngbertKliegl2003.
+
+### Velocity computation {#ek-vel}
+Horizontal and vertical velocity components are computed as
+$$v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}$$
+where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) that translates into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
+$$\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=$$
+$$\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=$$
+
+$$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
+$$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
+
+### Standard deviation via median estimator {#ek-sd}
+The standard deviation is computed following a formula 2 in @EngbertKliegl2003 as
+```r
+sqrt(median(x^2) - median(x)^2)
+```
+
+However, if the value is smaller than [`.Machine$double.eps`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/zMachine.html), it is recomputed via a mean estimator
+```r
+sqrt(mean(x^2) - mean(x)^2)
+```
+
+
+## References
