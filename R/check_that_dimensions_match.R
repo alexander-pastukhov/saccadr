@@ -5,7 +5,7 @@
 #'
 #' @param list_of_vectors
 #'
-#' @return
+#' @return NULL
 #' @export
 #' @keywords internal
 #'

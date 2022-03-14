@@ -9,9 +9,6 @@ check_that_lengths_match(list_of_vectors)
 \arguments{
 \item{list_of_vectors}{}
 }
-\value{
-
-}
 \description{
 Checks that all vectors in the list have the same length.
 Raises an error, if that is not the case.

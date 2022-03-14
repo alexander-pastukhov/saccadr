@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 # library(saccadr)
 ```
 
-## "ek": Engberg and Kliegl (2003)
+## "ek": Engbert and Kliegl (2003)
 
 Below is a brief description of the method as implemented in the package, please refer to @EngbertKliegl2003 for rationale and further details.
 

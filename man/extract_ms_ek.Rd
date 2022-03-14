@@ -42,11 +42,6 @@ All shorter microsaccades are discarded. Defaults to 12 ms.}
 \item{minimal_separation_ms}{A minimal required time gap between two microsaccades.
 Two microsaccades that a separated by a smaller time gap are merged into a single
 microsaccade. Defaults to 0 ms.}
-
-\item{time}{Sample time in milliseconds. Optional, can be omitted, if
-\code{sample_rate} is specified instead. Either \code{time} or
-\code{sample_rate} must be specified. \code{time} is used and
-\code{sample_rate} is ignored if both are specified.}
 }
 \value{
 \code{data.frame}

@@ -34,7 +34,7 @@ microsaccade).}
 \item{options}{A named list with options for a specific method.}
 }
 \value{
-
+data.frame
 }
 \description{
 Extracts microsaccades from samples using one of the implemented algorithms.

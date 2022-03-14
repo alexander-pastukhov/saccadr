@@ -12,7 +12,7 @@
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 #' @param options A named list with options for a specific method.
 #'
-#' @return
+#' @return data.frame
 #' @export
 #'
 #' @examples

@@ -4,7 +4,6 @@
 #'
 #' @docType package
 #' @import Rcpp
-#' @import RcppProgress
 #' @importFrom Rcpp evalCpp
 #' @useDynLib saccadr
 #' @name saccadr

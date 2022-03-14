@@ -5,10 +5,6 @@
 #'
 #' @param x Gaze x coordinate, arbitrary units as threshold velocity is computed in units of standard deviation.
 #' @param y Gaze x coordinate, arbitrary units as threshold velocity is computed in units of standard deviation.
-#' @param time Sample time in milliseconds. Optional, can be omitted, if
-#' \code{sample_rate} is specified instead. Either \code{time} or
-#' \code{sample_rate} must be specified. \code{time} is used and
-#' \code{sample_rate} is ignored if both are specified.
 #' @param sample_rate Sample rate of the recording in Hz.
 #' @param trial Trial id. Trial borders are respected when computing velocity.
 #' All samples are assumed to belong to the same trial, if \code{trial = NULL}.
@@ -28,6 +24,8 @@
 #' @return \code{data.frame}
 #' @export
 #' @importFrom dplyr %>% mutate filter select relocate rowwise n
+#' @importFrom rlang .data
+#' @importFrom stats median na.omit
 #'
 #' @examples
 extract_ms_ek <- function(x,
@@ -80,8 +78,8 @@ extract_ms_ek <- function(x,
                IsAboveThreshold = thresholded_periods$values) %>%
     
     # merging over subthreshold velocity periods that are shorter than minimal_separation
-    mutate(MarkAsAbove = IsAboveThreshold | 
-           (!IsAboveThreshold & DurationInSamples <= minimal_separation_in_samples))
+    mutate(MarkAsAbove = .data$IsAboveThreshold | 
+           (!.data$IsAboveThreshold & .data$DurationInSamples <= minimal_separation_in_samples))
   
   # rerunning grouping taking into account merging over the interruptions
   is_above_threshold <- rep(grouped_periods$MarkAsAbove, times=grouped_periods$DurationInSamples)
@@ -92,12 +90,12 @@ extract_ms_ek <- function(x,
                IsAboveThreshold = thresholded_periods$values) %>%
     
     # computing timing of each period
-    dplyr::mutate(OnsetSample = c(1, 1 + cumsum(DurationInSamples[1:(dplyr::n()-1)])),
-                  OffsetSample = cumsum(DurationInSamples),
-                  DurationMS = DurationInSamples * delta_t_ms) %>%
+    dplyr::mutate(OnsetSample = c(1, 1 + cumsum(.data$DurationInSamples[1:(dplyr::n()-1)])),
+                  OffsetSample = cumsum(.data$DurationInSamples),
+                  DurationMS = .data$DurationInSamples * delta_t_ms) %>%
 
     # retaining only saccades
-     dplyr::filter(IsAboveThreshold, DurationMS >= minimal_duration_ms)
+     dplyr::filter(.data$IsAboveThreshold, .data$DurationMS >= minimal_duration_ms)
 
   if (nrow(saccades) == 0) {
     return(NULL);
@@ -106,17 +104,17 @@ extract_ms_ek <- function(x,
   # computing saccades' properties
   saccades %>%
     rowwise() %>%
-    dplyr::mutate(vPeak =  max(v[OnsetSample[1]:OffsetSample[1]]),
-                  DeltaX = x[OffsetSample[1]] - x[OnsetSample[1]],
-                  DeltaY = y[OffsetSample[1]] - y[OnsetSample[1]],
-                  DeltaPhi = atan2(DeltaY, DeltaX),
-                  AmpX = sign(which.max(x[OnsetSample[1]:OffsetSample[1]]) - which.min(x[OnsetSample[1]:OffsetSample[1]])) * 
-                         (max(x[OnsetSample[1]:OffsetSample[1]]) - min(x[OnsetSample[1]:OffsetSample[1]])),
-                  AmpY = sign(which.max(y[OnsetSample[1]:OffsetSample[1]]) - which.min(y[OnsetSample[1]:OffsetSample[1]])) *
-                         (max(y[OnsetSample[1]:OffsetSample[1]]) - min(y[OnsetSample[1]:OffsetSample[1]])),
-                  Amplitude = sqrt(AmpX^2 + AmpY^2),
-                  AmpPhi = atan2(AmpY, AmpX)
+    dplyr::mutate(vPeak =  max(v[.data$OnsetSample[1]:.data$OffsetSample[1]]),
+                  DeltaX = x[.data$OffsetSample[1]] - x[.data$OnsetSample[1]],
+                  DeltaY = y[.data$OffsetSample[1]] - y[.data$OnsetSample[1]],
+                  DeltaPhi = atan2(.data$DeltaY, .data$DeltaX),
+                  AmpX = sign(which.max(x[.data$OnsetSample[1]:.data$OffsetSample[1]]) - which.min(x[.data$OnsetSample[1]:.data$OffsetSample[1]])) * 
+                         (max(x[.data$OnsetSample[1]:.data$OffsetSample[1]]) - min(x[.data$OnsetSample[1]:.data$OffsetSample[1]])),
+                  AmpY = sign(which.max(y[.data$OnsetSample[1]:.data$OffsetSample[1]]) - which.min(y[.data$OnsetSample[1]:.data$OffsetSample[1]])) *
+                         (max(y[.data$OnsetSample[1]:.data$OffsetSample[1]]) - min(y[.data$OnsetSample[1]:.data$OffsetSample[1]])),
+                  Amplitude = sqrt(.data$AmpX^2 + .data$AmpY^2),
+                  AmpPhi = atan2(.data$AmpY, .data$AmpX)
                   ) %>%
-    dplyr::select(-IsAboveThreshold) %>%
-    dplyr::relocate(OnsetSample, OffsetSample)
+    dplyr::select(-c("IsAboveThreshold")) %>%
+    dplyr::relocate(c("OnsetSample", "OffsetSample"))
 }
