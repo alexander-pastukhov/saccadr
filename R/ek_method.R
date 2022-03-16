@@ -21,7 +21,7 @@
 #' Two microsaccades that a separated by a smaller time gap are merged into a single
 #' microsaccade. Defaults to 0 ms.
 #'
-#' @return \code{data.frame}
+#' @return \code{data.frame} with 
 #' @export
 #' @importFrom dplyr %>% mutate filter select relocate rowwise n
 #' @importFrom rlang .data
@@ -95,26 +95,14 @@ extract_ms_ek <- function(x,
                   DurationMS = .data$DurationInSamples * delta_t_ms) %>%
 
     # retaining only saccades
-     dplyr::filter(.data$IsAboveThreshold, .data$DurationMS >= minimal_duration_ms)
+   dplyr::filter(.data$IsAboveThreshold, .data$DurationMS >= minimal_duration_ms) %>%
+  
+   # drop the redundant column   
+   dplyr::select(-c("IsAboveThreshold"))
 
   if (nrow(saccades) == 0) {
     return(NULL);
   }
-
-  # computing saccades' properties
-  saccades %>%
-    rowwise() %>%
-    dplyr::mutate(vPeak =  max(v[.data$OnsetSample[1]:.data$OffsetSample[1]]),
-                  DeltaX = x[.data$OffsetSample[1]] - x[.data$OnsetSample[1]],
-                  DeltaY = y[.data$OffsetSample[1]] - y[.data$OnsetSample[1]],
-                  DeltaPhi = atan2(.data$DeltaY, .data$DeltaX),
-                  AmpX = sign(which.max(x[.data$OnsetSample[1]:.data$OffsetSample[1]]) - which.min(x[.data$OnsetSample[1]:.data$OffsetSample[1]])) * 
-                         (max(x[.data$OnsetSample[1]:.data$OffsetSample[1]]) - min(x[.data$OnsetSample[1]:.data$OffsetSample[1]])),
-                  AmpY = sign(which.max(y[.data$OnsetSample[1]:.data$OffsetSample[1]]) - which.min(y[.data$OnsetSample[1]:.data$OffsetSample[1]])) *
-                         (max(y[.data$OnsetSample[1]:.data$OffsetSample[1]]) - min(y[.data$OnsetSample[1]:.data$OffsetSample[1]])),
-                  Amplitude = sqrt(.data$AmpX^2 + .data$AmpY^2),
-                  AmpPhi = atan2(.data$AmpY, .data$AmpX)
-                  ) %>%
-    dplyr::select(-c("IsAboveThreshold")) %>%
-    dplyr::relocate(c("OnsetSample", "OffsetSample"))
+  
+  saccades
 }
