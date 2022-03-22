@@ -71,14 +71,14 @@ extract_microsaccades <- function(x,
       velx = compute_velocity(x[, iEye], trial, sample_rate, velocity_time_window),
       vely = compute_velocity(y[, iEye], trial, sample_rate, velocity_time_window)
     )
-    vel_df$vel <- sqrt(vel_df[['vx']]^2 + vel_df[['vy']]^2)
+    vel_df$vel <- sqrt(vel_df[['velx']]^2 + vel_df[['vely']]^2)
     
     # compute acceleration (for methods that require it)
     acc_df <- data.frame(
       accx = compute_velocity(vel_df[['velx']], trial, sample_rate, velocity_time_window),
       accy = compute_velocity(vel_df[['vely']], trial, sample_rate, velocity_time_window)
     )
-    acc_df$acc <- sqrt(vel_df[['velx']]^2 + vel_df[['vely']]^2)
+    acc_df$acc <- sqrt(acc_df[['accx']]^2 + acc_df[['accy']]^2)
     
     
     # turning options into parameters passed via do.call
