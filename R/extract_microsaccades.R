@@ -20,7 +20,14 @@
 #' 
 #' # extract microsaccades from a single trial data using the default method
 #' ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
-extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = "merge", trial = NULL, options = list()){
+extract_microsaccades <- function(x,
+                                  y,
+                                  sample_rate,
+                                  velocity_time_window = 20,
+                                  method = "ek",
+                                  binocular = "merge",
+                                  trial = NULL,
+                                  options = list()){
   # Converting x and y to matrices, so we can treat monocular and binocular cases similarly.
   x <- input_to_matrix(x)
   y <- input_to_matrix(y)
@@ -57,9 +64,25 @@ extract_microsaccades <- function(x, y, sample_rate, method = "ek", binocular = 
   
   # Computing saccades for one (monocular or cyclopean) eye at a time
   saccades <- data.frame()
+  
   for(iEye in 1:ncol(x)) {
+    # compute velocity
+    vel_df <- data.frame(
+      velx = compute_velocity(x[, iEye], trial, sample_rate, velocity_time_window),
+      vely = compute_velocity(y[, iEye], trial, sample_rate, velocity_time_window)
+    )
+    vel_df$vel <- sqrt(vel_df[['vx']]^2 + vel_df[['vy']]^2)
+    
+    # compute acceleration (for methods that require it)
+    acc_df <- data.frame(
+      accx = compute_velocity(vel_df[['velx']], trial, sample_rate, velocity_time_window),
+      accy = compute_velocity(vel_df[['vely']], trial, sample_rate, velocity_time_window)
+    )
+    acc_df$acc <- sqrt(vel_df[['velx']]^2 + vel_df[['vely']]^2)
+    
+    
     # turning options into parameters passed via do.call
-    call_arguments <- c(list(x = x[, iEye], y = y[, iEye], sample_rate = sample_rate, trial = trial), options)
+    call_arguments <- c(list(x = x[, iEye], y = y[, iEye], vel=vel, acc=acc, sample_rate = sample_rate, trial = trial), options)
     
     # extract saccades via the requested method
     eye_saccades <- do.call(supported_methods[[method]], call_arguments)
