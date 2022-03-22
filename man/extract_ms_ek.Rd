@@ -44,7 +44,7 @@ Two microsaccades that a separated by a smaller time gap are merged into a singl
 microsaccade. Defaults to 0 ms.}
 }
 \value{
-\code{data.frame}
+\code{data.frame} with
 }
 \description{
 Extract microsaccades using an algorithm proposed by Engbert and
