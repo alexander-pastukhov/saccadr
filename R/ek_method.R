@@ -21,11 +21,8 @@
 #' Two microsaccades that a separated by a smaller time gap are merged into a single
 #' microsaccade. Defaults to 0 ms.
 #'
-#' @return \code{data.frame} with 
+#' @return logical vector marking samples that belong to a saccade.
 #' @export
-#' @importFrom dplyr %>% mutate filter select relocate rowwise n
-#' @importFrom rlang .data
-#' @importFrom stats median na.omit
 #'
 #' @examples
 extract_ms_ek <- function(x,
@@ -34,77 +31,38 @@ extract_ms_ek <- function(x,
                           acc,
                           sample_rate,
                           trial = NULL,
-                          velocity_time_window = 20,
                           velocity_threshold = 6,
                           sd_fun = sd_via_median_estimator,
                           minimal_duration_ms = 12,
-                          minimal_separation_ms = 0){
+                          minimal_separation_ms = 12){
 
   # single sample duration (Δt in formula #1)
-  delta_t <- 1 / sample_rate
-  delta_t_ms <- 1000 * delta_t
+  delta_t_ms <- 1000 / sample_rate
   minimal_separation_in_samples <- ceiling(minimal_separation_ms / delta_t_ms)
+  minimal_duration_in_samples <- ceiling(minimal_duration_ms / delta_t_ms)
 
-  ## computing time window for velocity IN SAMPLES.
-  time_window_in_samples <- ceiling(velocity_time_window / delta_t_ms)
-  # making sure we have odd number of samples, so it is centered on the sample...
-  if (time_window_in_samples %% 2 == 0) time_window_in_samples <- time_window_in_samples + 1
-  # and is at least three samples long.
-  if (time_window_in_samples < 3) time_window_in_samples <- 3
-
-  # do we have trial information? If not, all samples are from the same trial.
-  if (is.null(trial)) trial <- rep(1, length(x))
-
-  # check that dimensions actually match, raises an error, if that is not the case.
-  check_that_lengths_match(list(x, y, trial))
-  
-  # # compute velocity per trial.
-  vel_xy <- matrix(c(compute_velocity_ek(x, trial, time_window_in_samples, delta_t),
-                     compute_velocity_ek(y, trial, time_window_in_samples, delta_t)),
-                   ncol = 2)
-  v <- sqrt(vel_xy[, 1]^2 + vel_xy[, 2]^2)
-  
   # standard deviation (by default via median estimator as per formula #2)
-  sigma_xy <- apply(vel_xy, MARGIN = 2, FUN = sd_fun, na.rm = TRUE)
+  sigma_xy <- apply(vel[, c("velx", "vely")], MARGIN = 2, FUN = sd_fun, na.rm = TRUE)
   
   # velocity threshold, formula #3
   vel_threshold <- sigma_xy * velocity_threshold
 
   # computing normalized velocity in the units of the threshold
-  vel_norm <- sqrt((vel_xy[, 1] / vel_threshold[1])^2 + (vel_xy[, 2] / vel_threshold[2])^2)
+  vel_norm <- sqrt((vel[['velx']]/ vel_threshold[1])^2 + (vel[['vely']] / vel_threshold[2])^2)
 
   # marking out consecutive periods of high (above threshold) velocity
   thresholded_periods <- rle(vel_norm > 1.0)
-  grouped_periods <- 
-    data.frame(DurationInSamples = thresholded_periods$lengths,
-               IsAboveThreshold = thresholded_periods$values) %>%
-    
-    # merging over subthreshold velocity periods that are shorter than minimal_separation
-    mutate(MarkAsAbove = .data$IsAboveThreshold | 
-           (!.data$IsAboveThreshold & .data$DurationInSamples <= minimal_separation_in_samples))
   
-  # rerunning grouping taking into account merging over the interruptions
-  is_above_threshold <- rep(grouped_periods$MarkAsAbove, times=grouped_periods$DurationInSamples)
-  thresholded_periods <- rle(is_above_threshold)
-
-  saccades <-
-    data.frame(DurationInSamples = thresholded_periods$lengths,
-               IsAboveThreshold = thresholded_periods$values) %>%
-    
-    # computing timing of each period
-    dplyr::mutate(OnsetSample = c(1, 1 + cumsum(.data$DurationInSamples[1:(dplyr::n()-1)])),
-                  OffsetSample = cumsum(.data$DurationInSamples),
-                  DurationMS = .data$DurationInSamples * delta_t_ms) %>%
-
-    # retaining only saccades
-   dplyr::filter(.data$IsAboveThreshold, .data$DurationMS >= minimal_duration_ms) %>%
+  # labeling potential saccade samples: either super-threshold or brief sub-threshold periods
+  thresholded_periods$values <- (thresholded_periods$values == TRUE) |  # 1. super-threshold
+                                (thresholded_periods$values == FALSE &  # 2. sub-threshold
+                                 lead(thresholded_periods$values) == TRUE & # surrounded by super-threshold on both sides
+                                 lag(thresholded_periods$values) == TRUE & 
+                                 thresholded_periods$lengths <= minimal_separation_in_samples) # shorter then minimal fixation
+  marked_samples <- inverse.rle(thresholded_periods)
   
-   # drop the redundant column   
-   dplyr::select(-c("IsAboveThreshold"))
-
-  if (nrow(saccades) == 0) {
-    return(NULL);
-  }
-  
-  saccades
+  # retaining only potential saccades that are longer than minimal required duration
+  potential_saccades <- rle(marked_samples)
+  potential_saccades$values <- potential_saccades$values == TRUE & potential_saccades$lengths >= minimal_duration_in_samples
+  inverse.rle(potential_saccades)
 }
