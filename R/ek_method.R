@@ -30,6 +30,8 @@
 #' @examples
 extract_ms_ek <- function(x,
                           y,
+                          vel,
+                          acc,
                           sample_rate,
                           trial = NULL,
                           velocity_time_window = 20,
