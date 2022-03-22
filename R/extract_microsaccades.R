@@ -63,7 +63,7 @@ extract_microsaccades <- function(x,
   }
   
   # Computing saccades for one (monocular or cyclopean) eye at a time
-  saccades <- data.frame()
+  potential_saccades <- matrix(0, ncol = ncol(x), nrow = nrow(x))
   
   for(iEye in 1:ncol(x)) {
     # compute velocity
@@ -84,8 +84,8 @@ extract_microsaccades <- function(x,
     # turning options into parameters passed via do.call
     call_arguments <- c(list(x = x[, iEye], y = y[, iEye], vel=vel, acc=acc, sample_rate = sample_rate, trial = trial), options)
     
-    # extract saccades via the requested method
-    eye_saccades <- do.call(supported_methods[[method]], call_arguments)
+    # add votes for potential saccades
+    potential_saccades[, iEye] <- potential_saccades[, iEye] + do.call(supported_methods[[method]], call_arguments)
     
     # eye label  
     if (ncol(x) == 1) {
