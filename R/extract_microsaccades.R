@@ -28,13 +28,13 @@ extract_microsaccades <- function(x,
                                   binocular = "merge",
                                   trial = NULL,
                                   options = list()){
-  # Converting x and y to matrices, so we can treat monocular and binocular cases similarly.
+  # Converting x and y to matrices, so we can treat monocular and binocular cases the same way.
   x <- input_to_matrix(x)
   y <- input_to_matrix(y)
 
   # Checking that matrices dimensions match and are valid.
   if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
-  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectord or two-column matrices.")
+  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
   
   # Checking method.
   supported_methods <- list("ek" = saccadr::extract_ms_ek)
