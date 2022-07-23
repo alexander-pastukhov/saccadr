@@ -3,7 +3,9 @@
 #' @param x Horizontal coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
 #' @param y Vertical coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
 #' @param sample_rate Sampling rate in Hz.
-#' @param method A string with a method name. Currently implemented are Engbret & Kliegl (2003) (\code{"ek"}, default).
+#' @param methods A _list_ (not a vector!) with names of package methods (character) or external functions that
+#' implement sample classification (see vignette on using custom method). Package methods include 
+#' Engbret & Kliegl (2003) (\code{"ek"}).
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
 #' are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
@@ -24,7 +26,7 @@ extract_microsaccades <- function(x,
                                   y,
                                   sample_rate,
                                   velocity_time_window = 20,
-                                  method = "ek",
+                                  methods = list("ek"),
                                   binocular = "merge",
                                   trial = NULL,
                                   options = list()){
@@ -36,9 +38,10 @@ extract_microsaccades <- function(x,
   if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
   
-  # Checking method.
-  supported_methods <- list("ek" = saccadr::extract_ms_ek)
-  if (!(method %in% names(supported_methods))) stop("Unknown method.")
+  # Checking methods
+  if (!is.list(methods)) stop("methods must be a list (not a vector) of method names or functions")
+  internal_methods <- list("ek" = saccadr::extract_ms_ek)
+  # if (!(method %in% names(supported_methods))) stop("Unknown method.")
   
   # Checking trial information
   if (is.null(trial)) {
@@ -46,11 +49,12 @@ extract_microsaccades <- function(x,
     itrial <- rep(1, nrow(x))
   } else {
     if (length(trial) != nrow(x)) stop("Dimensions for x/y and trial do not match.")
+    
     # converting to an integer via factor for consistency
-    itrial <- as.integer(as.factor(factor))
+    itrial <- as.integer(as.factor(trial))
   }
   
-  # Binocular data, checks and optional preprocessing.
+  # Binocular data, checks and optional pre-processing.
   if ((ncol(x) == 2)) {
     # Checking validity of a binocular option.
     if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "monocular", or "merge".')
@@ -63,7 +67,10 @@ extract_microsaccades <- function(x,
   }
   
   # Computing saccades for one (monocular or cyclopean) eye at a time
-  potential_saccades <- matrix(0, ncol = ncol(x), nrow = nrow(x))
+  sample_label <- list()
+  for(iEye in 1:ncol(x)) {
+    sample_label[[iEye]] <- matrix(0, nrow = nrow(x), ncol = length(methods))
+  }
   
   for(iEye in 1:ncol(x)) {
     # compute velocity
@@ -79,8 +86,7 @@ extract_microsaccades <- function(x,
       accy = compute_velocity(vel_df[['vely']], trial, sample_rate, velocity_time_window)
     )
     acc_df$acc <- sqrt(acc_df[['accx']]^2 + acc_df[['accy']]^2)
-    
-    
+
     # turning options into parameters passed via do.call
     call_arguments <- c(list(x = x[, iEye], y = y[, iEye], vel=vel, acc=acc, sample_rate = sample_rate, trial = trial), options)
     
