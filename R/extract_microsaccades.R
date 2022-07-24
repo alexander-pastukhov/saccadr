@@ -1,4 +1,4 @@
-#' Extracts microsaccades from samples using one of the implemented algorithms.
+#' Extracts microsaccades from samples using votes from selected algorithms.
 #'
 #' @param x Horizontal coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
 #' @param y Vertical coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
@@ -11,6 +11,8 @@
 #' are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
 #' independently but microsaccades from different eyes that temporally overlap are averaged into a binocular
 #' microsaccade).
+#' @param vote_threshold Value between 0..1 defining a vote threshold for a saccade. The default (\code{vote_threshold = 1})
+#' means that _all_ methods must agree.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 #' @param options A named list with options for a specific method.
 #'
@@ -22,92 +24,28 @@
 #' 
 #' # extract microsaccades from a single trial data using the default method
 #' ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
-extract_microsaccades <- function(x,
-                                  y,
-                                  sample_rate,
-                                  velocity_time_window = 20,
-                                  methods = list("ek"),
-                                  binocular = "merge",
-                                  trial = NULL,
-                                  options = list()){
-  # Converting x and y to matrices, so we can treat monocular and binocular cases the same way.
-  x <- input_to_matrix(x)
-  y <- input_to_matrix(y)
+extract_saccades <- function(x,
+                             y,
+                             sample_rate,
+                             velocity_time_window = 20,
+                             methods = list("ek"),
+                             binocular = "merge",
+                             vote_threshold = 1,
+                             trial = NULL,
+                             options = list()){
+  # getting sample votes
+  sample_votes <- vote_on_samples(x = x,
+                                  y = y,
+                                  sample_rate = sample_rate, 
+                                  velocity_time_window = velocity_time_window,
+                                  methods = methods,
+                                  binocular = binocular,
+                                  normalize = TRUE,
+                                  trial = trial,
+                                  options = options)
+  
+  # thresholding votes
+  is_saccade <- sample_votes >= vote_threshold
 
-  # Checking that matrices dimensions match and are valid.
-  if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
-  if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
-  
-  # Checking methods
-  if (!is.list(methods)) stop("methods must be a list (not a vector) of method names or functions")
-  internal_methods <- list("ek" = saccadr::extract_ms_ek)
-  # if (!(method %in% names(supported_methods))) stop("Unknown method.")
-  
-  # Checking trial information
-  if (is.null(trial)) {
-    # All samples belong to the same trial.
-    itrial <- rep(1, nrow(x))
-  } else {
-    if (length(trial) != nrow(x)) stop("Dimensions for x/y and trial do not match.")
-    
-    # converting to an integer via factor for consistency
-    itrial <- as.integer(as.factor(trial))
-  }
-  
-  # Binocular data, checks and optional pre-processing.
-  if ((ncol(x) == 2)) {
-    # Checking validity of a binocular option.
-    if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "monocular", or "merge".')
-    
-    # Special case, cyclopean data via averaging.
-    if (binocular == "cyclopean") {
-      x <- as.matrix(rowMeans(x))
-      y <- as.matrix(rowMeans(y))
-    }
-  }
-  
-  # Computing saccades for one (monocular or cyclopean) eye at a time
-  sample_label <- list()
-  for(iEye in 1:ncol(x)) {
-    sample_label[[iEye]] <- matrix(0, nrow = nrow(x), ncol = length(methods))
-  }
-  
-  for(iEye in 1:ncol(x)) {
-    # compute velocity
-    vel_df <- data.frame(
-      velx = compute_velocity(x[, iEye], trial, sample_rate, velocity_time_window),
-      vely = compute_velocity(y[, iEye], trial, sample_rate, velocity_time_window)
-    )
-    vel_df$vel <- sqrt(vel_df[['velx']]^2 + vel_df[['vely']]^2)
-    
-    # compute acceleration (for methods that require it)
-    acc_df <- data.frame(
-      accx = compute_velocity(vel_df[['velx']], trial, sample_rate, velocity_time_window),
-      accy = compute_velocity(vel_df[['vely']], trial, sample_rate, velocity_time_window)
-    )
-    acc_df$acc <- sqrt(acc_df[['accx']]^2 + acc_df[['accy']]^2)
-
-    # turning options into parameters passed via do.call
-    call_arguments <- c(list(x = x[, iEye], y = y[, iEye], vel=vel, acc=acc, sample_rate = sample_rate, trial = trial), options)
-    
-    # add votes for potential saccades
-    potential_saccades[, iEye] <- potential_saccades[, iEye] + do.call(supported_methods[[method]], call_arguments)
-    
-    # eye label  
-    if (ncol(x) == 1) {
-      eye_saccades$Eye <- "Cyclopean"
-    } else {
-      eye_saccades$Eye <- c("Left", "Right")[iEye]
-    }
-    
-    # adding to the overall table
-    saccades <- rbind(saccades, eye_saccades)
-  }
-  
-  # Post-processing
-  if (ncol(x) == 2 & binocular == "merge") {
-    # TODO: merger
-  }
-  
-  saccades
+  # TODO: extract saccades from votes
 }
