@@ -44,6 +44,7 @@ extract_ms_nh <- function(x,
   
   # --- identify physiologically unrealistic velocity and acceleration
   itrial <- 1
+  median_v <- median(trace$data[[itrial]]$vel, na.rm = TRUE)
   i_bad_peak <- which(trace$data[[itrial]]$vel > max_velocity | trace$data[[itrial]]$acc > max_acceleration)
   
 }
