@@ -7,27 +7,28 @@
 extract_ms_ek(
   x,
   y,
+  vel,
+  acc,
   sample_rate,
-  trial = NULL,
-  velocity_time_window = 20,
+  trial,
   velocity_threshold = 6,
   sd_fun = sd_via_median_estimator,
   minimal_duration_ms = 12,
-  minimal_separation_ms = 0
+  minimal_separation_ms = 12
 )
 }
 \arguments{
-\item{x}{Gaze x coordinate, arbitrary units as threshold velocity is computed in units of standard deviation.}
+\item{x}{Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.}
 
-\item{y}{Gaze x coordinate, arbitrary units as threshold velocity is computed in units of standard deviation.}
+\item{y}{Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.}
+
+\item{vel}{Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.}
+
+\item{acc}{Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.}
 
 \item{sample_rate}{Sample rate of the recording in Hz.}
 
-\item{trial}{Trial id. Trial borders are respected when computing velocity.
-All samples are assumed to belong to the same trial, if \code{trial = NULL}.}
-
-\item{velocity_time_window}{Time span in milliseconds relative to the sample
-that is used  to compute the velocity. Defaults to 20 ms.}
+\item{trial}{Trial id. Trial borders are respected when computing velocity.}
 
 \item{velocity_threshold}{Velocity threshold for microsaccade detection
 in medians. Defaults to 6.}
@@ -42,11 +43,24 @@ All shorter microsaccades are discarded. Defaults to 12 ms.}
 \item{minimal_separation_ms}{A minimal required time gap between two microsaccades.
 Two microsaccades that a separated by a smaller time gap are merged into a single
 microsaccade. Defaults to 0 ms.}
+
+\item{velocity_time_window}{Time span in milliseconds relative to the sample
+that is used  to compute the velocity. Defaults to 20 ms.}
 }
 \value{
-\code{data.frame} with
+logical vector marking samples that belong to saccades
 }
 \description{
-Extract microsaccades using an algorithm proposed by Engbert and
-Kliegl (2003).
+Marks out samples that belong to saccades using an algorithm
+proposed by Engbert and Kliegl (2003). Do not call this function directly,
+instead use the common interface via \code{\link{extract_microsaccades}} passing
+additional parameters (\code{velocity_threshold}, \code{sd_fun},
+\code{minimal_duration_ms}, \code{minimal_separation_ms}) via its \code{options}
+parameter.
+}
+\examples{
+# do not run this function directly, use extract_microsaccades
+}
+\seealso{
+\code{\link{extract_microsaccades}}
 }

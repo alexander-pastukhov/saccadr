@@ -6,9 +6,6 @@
 \usage{
 compute_saccade_proporties()
 }
-\value{
-
-}
 \description{
 Compute saccade properties
 }
