@@ -11,10 +11,10 @@ extract_ms_om(
   acc,
   sample_rate,
   trial,
-  velocity_threshold = 6,
-  sd_fun = sd_via_median_estimator,
-  minimal_duration_ms = 12,
-  minimal_separation_ms = 12
+  minimal_inter_peak_time_ms = 30,
+  maximal_peaks_per_second = 5,
+  velocity_threshold_deg_per_sec = 3,
+  pca_variance_threshold = 0.05
 )
 }
 \arguments{

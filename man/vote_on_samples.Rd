@@ -13,7 +13,7 @@ vote_on_samples(
   binocular = "merge",
   normalize = TRUE,
   trial = NULL,
-  options = list()
+  options = NULL
 )
 }
 \arguments{
