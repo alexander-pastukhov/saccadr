@@ -2,7 +2,7 @@
 % Please edit documentation in R/om_method.R
 \name{extract_ms_om}
 \alias{extract_ms_om}
-\title{Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014)}
+\title{Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}}
 \usage{
 extract_ms_om(
   x,
@@ -25,10 +25,28 @@ extract_ms_om(
 \item{vel}{Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.}
 
 \item{acc}{Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.}
+
+\item{sample_rate}{Sample rate in Hz.}
+
+\item{trial}{Trial id, so that trial borders are respected when computing velocity and saccades.}
+
+\item{minimal_inter_peak_time_ms}{Minimal inter-peak interval in milliseconds. Please refer to Otero-Millan et al. (2014) for details.}
+
+\item{maximal_peaks_per_second}{Maximal allowed number of peaks per second. Please refer to Otero-Millan et al. (2014) for details.}
+
+\item{velocity_threshold_deg_per_sec}{Threshold saccade velocity.  Please refer to Otero-Millan et al. (2014) for details.}
+
+\item{pca_variance_threshold}{Minimal variance explained by rotated components. Please refer to Otero-Millan et al. (2014) for details.}
+}
+\value{
+logical vector marking samples that belong to saccades
 }
 \description{
-Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014)
+Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}
 }
 \examples{
-# do not run this function directly, use extract_microsaccades
+# Do not run this function directly, use vote_on_samples() or extract_saccades()
+}
+\seealso{
+\code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
 }

@@ -1,9 +1,22 @@
-#' Extract microsaccades using an algorithm proposed by Nyström and Holmqvist (2010)
+#' Extract microsaccades using an algorithm proposed by Nyström and Holmqvist (2010) \doi{10.3758/BRM.42.1.188}.
 #'
+#' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
+#' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
+#' @param vel Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.
+#' @param acc Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.
+#' @param sample_rate Sample rate in Hz.
+#' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
+#' @param sg_filter_order Order of Savitzky-Golay filter. Please refer to Nyström and Holmqvist (2010) for details.
+#' @param max_velocity Maximal physiologically plausible velocity in °/s. Please refer to Nyström and Holmqvist (2010) for details.
+#' @param max_acceleration Maximal physiologically plausible acceleration in °/s*s. Please refer to Nyström and Holmqvist (2010) for details.
+#' @return logical vector marking samples that belong to saccades
+#' @export
 #' @importFrom magrittr `%>%`
 #' @importFrom dplyr group_by mutate n
 #' @importFrom tidyr nest unnest
-#' @export
+#' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
+#' @examples 
+#' # Do not run this function directly, use vote_on_samples() or extract_saccades()
 extract_ms_nh <- function(x,
                           y,
                           vel,
@@ -13,11 +26,7 @@ extract_ms_nh <- function(x,
                           sg_filter_order = 2,
                           max_velocity = 1000,
                           max_acceleration = 100000,
-                          initial_velocity_threshold = 100,
-                          velocity_threshold = 6,
-                          sd_fun = sd_via_median_estimator,
-                          minimal_duration_ms = 12,
-                          minimal_separation_ms = 12){
+                          initial_velocity_threshold = 100){
   delta_t_s <- 1 / sample_rate
   
   # --- compute and filter velocity and acceleration

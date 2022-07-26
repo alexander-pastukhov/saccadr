@@ -43,7 +43,7 @@ $$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
 $$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
 
 As noted in @Otero-Millan2014, this is equivalent to smoothing $x$ with a normalized Bartlett window (n=6 for five-sample velocity computation) and differentiating, see the code below.
-```{r}
+```{r eval=FALSE}
 # assuming vector `x` and a scalar `sample_rate`
 barlett_window <- signal::bartlett(6)
 smoothed_x <- signal::filter(barlett_window/sum(barlett_window), 1, x)

@@ -9,7 +9,7 @@ vote_on_samples(
   y,
   sample_rate,
   velocity_time_window = 20,
-  methods = list("ek"),
+  methods = list("ek", "om", "nh"),
   binocular = "merge",
   normalize = TRUE,
   trial = NULL,

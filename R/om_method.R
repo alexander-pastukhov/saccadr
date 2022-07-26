@@ -1,17 +1,25 @@
-#' Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014)
+#' Extract microsaccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}
 #' 
 #' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param vel Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.
 #' @param acc Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.
+#' @param sample_rate Sample rate in Hz.
+#' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
+#' @param minimal_inter_peak_time_ms Minimal inter-peak interval in milliseconds. Please refer to Otero-Millan et al. (2014) for details.
+#' @param maximal_peaks_per_second Maximal allowed number of peaks per second. Please refer to Otero-Millan et al. (2014) for details.
+#' @param velocity_threshold_deg_per_sec Threshold saccade velocity.  Please refer to Otero-Millan et al. (2014) for details.
+#' @param pca_variance_threshold Minimal variance explained by rotated components. Please refer to Otero-Millan et al. (2014) for details.
+#' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`
 #' @importFrom dplyr group_by mutate lag lead pull filter select
 #' @importFrom tidyr nest unnest
 #' @importFrom stats prcomp kmeans
 #' @importFrom cluster silhouette
+#' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
 #' @examples
-#' # do not run this function directly, use extract_microsaccades
+#' # Do not run this function directly, use vote_on_samples() or extract_saccades()
 extract_ms_om <- function(x,
                           y,
                           vel,
