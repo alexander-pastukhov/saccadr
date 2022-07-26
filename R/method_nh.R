@@ -137,15 +137,17 @@ extract_ms_nh <- function(x,
 
 #' Smooths signal using Savitzky-Golay and then shifts the filtered signal back
 #'
-#' @param x 
-#' @param sgOrder 
+#' @param x vector of float
+#' @param sgOrder integer, order of the filter
 #'
-#' @return
+#' @return vector of float
 #' @importFrom signal sgolayfilt
 #' @export
 #' @keywords internal
 #'
 #' @examples
+#' x <- nrand(1000)
+#' filter_via_savitzky_golay(x, 2)
 filter_via_savitzky_golay <- function(x, sg_order){
   sg_length <- sg_order + 3 - sg_order %% 2
   x_shifted <- signal::sgolayfilt(x, p = sg_order, n = sg_length)

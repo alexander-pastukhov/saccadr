@@ -14,6 +14,9 @@ compute_velocity(x, trial, sample_rate, velocity_time_window)
 \item{velocity_time_window}{Time span in milliseconds relative to the sample
 that is used  to compute the velocity. Defaults to 20 ms.}
 }
+\value{
+vector of float
+}
 \description{
 Compute velocity based on Engbert & Kliegl (2003)
 }

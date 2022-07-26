@@ -3,7 +3,7 @@
 #' @param sample_rate Sample rate of the recording in Hz.
 #' @param velocity_time_window Time span in milliseconds relative to the sample
 #' that is used  to compute the velocity. Defaults to 20 ms.
-#' @return
+#' @return vector of float
 #' @export
 #'
 #' @examples

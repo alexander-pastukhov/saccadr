@@ -7,11 +7,18 @@
 filter_via_savitzky_golay(x, sg_order)
 }
 \arguments{
-\item{x}{}
+\item{x}{vector of float}
 
-\item{sgOrder}{}
+\item{sgOrder}{integer, order of the filter}
+}
+\value{
+vector of float
 }
 \description{
 Smooths signal using Savitzky-Golay and then shifts the filtered signal back
+}
+\examples{
+x <- nrand(1000)
+filter_via_savitzky_golay(x, 2)
 }
 \keyword{internal}
