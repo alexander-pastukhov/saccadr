@@ -1,20 +1,20 @@
-#' Extract microsaccades using an algorithm proposed by Nyström and Holmqvist (2010) \doi{10.3758/BRM.42.1.188}.
+#' Extract saccades using an algorithm proposed by Nyström and Holmqvist (2010) \doi{10.3758/BRM.42.1.188}.
 #'
 #' @details Method options, please refer to Nyström and Holmqvist (2010) for details on parameters and the rationale for default values.
 #' \itemize{
 #' \item{\code{nh_sg_filter_order}} {Order of Savitzky-Golay filter. Defaults to \code{2}}.
 #' \item{\code{nh_max_velocity}} {Maximal physiologically plausible velocity in °/s. Defaults to \code{1000}.}
-#' \item{\code{nh_max_acceleration}} {Maximal physiologically plausible acceleration in °/s<sup>2</sup>. Defaults to \code{100000}.}
+#' \item{\code{nh_max_acceleration}} {Maximal physiologically plausible acceleration in °/s². Defaults to \code{100000}.}
 #' \item{\code{nh_initial_velocity_threshold}} {Initial velocity threshold in °/s. Defaults to \code{100}.}
 #' }
 #'
 #' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
-#' @param vel Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.
-#' @param acc Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.
+#' @param vel Velocity \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
+#' @param acc Acceleration \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
 #' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
-#' @param options Names list with method options. See _details_ for further information.
+#' @param options Names list with method options. See \emph{details} for further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`

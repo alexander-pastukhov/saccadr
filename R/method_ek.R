@@ -1,30 +1,36 @@
-#' Extract microsaccades using an algorithm proposed by Engbert and Kliegl (2003) \doi{10.1016/S0042-6989(03)00084-1}
+#' Extract saccades using an algorithm proposed by Engbert and Kliegl (2003) \doi{10.1016/S0042-6989(03)00084-1}
 #'
+#' @details Method options, please refer to Engbert and Kliegl (2003) for details on parameters and the rationale for default values.
+#' \itemize{
+#' \item{\code{ek_velocity_threshold}} {Velocity threshold for saccade detection in medians. Defaults to \code{6}.}
+#' \item{\code{ek_sd_fun}} {Function used to compute standard deviation for velocities. Defaults to \code{\link{sd_via_median_estimator}}, as per formula #2 in Engbert and Kliegl (2003). Can be replaced with \code{mad}, \code{sd}, etc.}
+#' \item{\code{ek_minimal_duration_ms}} {Minimal duration of a saccade in milliseconds. Defaults to \code{12}.}
+#' \item{\code{ek_minimal_separation_ms}} {A minimal required time gap between saccades. Defaults to \code{12}.}
+#' }
 #' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
-#' @param vel Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.
-#' @param acc Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.
+#' @param vel Velocity \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
+#' @param acc Acceleration \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
 #' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
-#' @param velocity_threshold Velocity threshold for microsaccade detection in medians. Please refer to Engbert and Kliegl (2003) for details.
-#' @param sd_fun Function used to compute standard deviation for velocities. Defaults to \code{sd_via_median_estimator}, as per formula #2 in Engbert and Kliegl (2003). Can be replaced with \code{mad}, \code{sd}, etc.
-#' @param minimal_duration_ms Minimal duration of a microsaccade in milliseconds. Please refer to Engbert and Kliegl (2003) for details.
-#' @param minimal_separation_ms A minimal required time gap between two microsaccades. Please refer to Engbert and Kliegl (2003) for details.
+#' @param options Names list with method options. See \emph{details} for further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
 #' @examples
 #' # Do not run this function directly, use vote_on_samples() or extract_saccades()
-extract_ms_ek <- function(x,
-                          y,
-                          vel,
-                          acc,
-                          sample_rate,
-                          trial,
-                          velocity_threshold = 6,
-                          sd_fun = sd_via_median_estimator,
-                          minimal_duration_ms = 12,
-                          minimal_separation_ms = 12){
+method_ek <- function(x,
+                      y,
+                      vel,
+                      acc,
+                      sample_rate,
+                      trial,
+                      options){
+  # options
+  velocity_threshold <- option_or_default(options, "ek_velocity_threshold", 6)
+  sd_fun <- option_or_default(options, "ek_sd_fun", sd_via_median_estimator)
+  minimal_duration_ms <- option_or_default(options, "ek_minimal_duration_ms", 12)
+  minimal_separation_ms <- option_or_default(options, "ek_minimal_separation_ms", 12)
 
   # single sample duration (Δt in formula #1)
   delta_t_ms <- 1000 / sample_rate

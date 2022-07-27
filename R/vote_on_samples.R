@@ -2,12 +2,12 @@
 #' 
 #' This function is called by \code{\link{extract_microsaccades}} but can be used directly,
 #' if you are interested in the vote-per-sample.
-#' @param x Horizontal coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
-#' @param y Vertical coordinate, ether a vector for monocular data or a two-column matrix for binocular data. 
+#' @param x Horizontal coordinate, either a vector for monocular data or a two-column matrix for binocular data.
+#' @param y Vertical coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param sample_rate Sampling rate in Hz.
 #' @param methods A _list_ (not a vector!) with names of package methods (character) or external functions that
 #' implement sample classification (see vignette on using custom method). Package methods include 
-#' Engbret & Kliegl (2003) (\code{"ek"}).
+#' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
 #' are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
@@ -25,7 +25,6 @@
 vote_on_samples <- function(x,
                             y,
                             sample_rate,
-                            velocity_time_window = 20,
                             methods = list("ek", "om", "nh"),
                             binocular = "merge",
                             normalize = TRUE,
@@ -41,8 +40,8 @@ vote_on_samples <- function(x,
   
   # Checking methods
   if (!is.list(methods)) stop("methods must be a list (not a vector) of method names or functions")
-  internal_methods <- list("ek" = saccadr::extract_ms_ek,
-                           "om" = saccadr::extract_ms_om,
+  internal_methods <- list("ek" = saccadr::method_ek,
+                           "om" = saccadr::method_om,
                            "nh" = saccadr::method_nh)
   method_handle <- list()
   for(iM in 1:length(methods)){

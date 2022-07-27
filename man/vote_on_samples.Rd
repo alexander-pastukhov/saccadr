@@ -8,7 +8,6 @@ vote_on_samples(
   x,
   y,
   sample_rate,
-  velocity_time_window = 20,
   methods = list("ek", "om", "nh"),
   binocular = "merge",
   normalize = TRUE,
@@ -17,15 +16,15 @@ vote_on_samples(
 )
 }
 \arguments{
-\item{x}{Horizontal coordinate, ether a vector for monocular data or a two-column matrix for binocular data.}
+\item{x}{Horizontal coordinate, either a vector for monocular data or a two-column matrix for binocular data.}
 
-\item{y}{Vertical coordinate, ether a vector for monocular data or a two-column matrix for binocular data.}
+\item{y}{Vertical coordinate, either a vector for monocular data or a two-column matrix for binocular data.}
 
 \item{sample_rate}{Sampling rate in Hz.}
 
 \item{methods}{A _list_ (not a vector!) with names of package methods (character) or external functions that
 implement sample classification (see vignette on using custom method). Package methods include 
-Engbret & Kliegl (2003) (\code{"ek"}).}
+Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
