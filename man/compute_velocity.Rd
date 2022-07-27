@@ -11,8 +11,7 @@ compute_velocity(x, trial, sample_rate, velocity_time_window)
 
 \item{sample_rate}{Sample rate of the recording in Hz.}
 
-\item{velocity_time_window}{Time span in milliseconds relative to the sample
-that is used  to compute the velocity. Defaults to 20 ms.}
+\item{velocity_time_window}{Time span in milliseconds relative to the sample that is used  to compute the velocity. Defaults to 20 ms.}
 }
 \value{
 vector of float
