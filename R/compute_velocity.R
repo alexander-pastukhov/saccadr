@@ -1,8 +1,7 @@
 #' Compute velocity based on Engbert & Kliegl (2003)
 #' @param x Vector of values
 #' @param sample_rate Sample rate of the recording in Hz.
-#' @param velocity_time_window Time span in milliseconds relative to the sample
-#' that is used  to compute the velocity. Defaults to 20 ms.
+#' @param velocity_time_window Time span in milliseconds relative to the sample that is used  to compute the velocity. Defaults to 20 ms.
 #' @return vector of float
 #' @export
 #'
