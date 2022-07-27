@@ -1,14 +1,20 @@
 #' Extract microsaccades using an algorithm proposed by Nyström and Holmqvist (2010) \doi{10.3758/BRM.42.1.188}.
 #'
+#' @details Method options, please refer to Nyström and Holmqvist (2010) for details on parameters and the rationale for default values.
+#' \itemize{
+#' \item{\code{nh_sg_filter_order}} {Order of Savitzky-Golay filter. Defaults to \code{2}}.
+#' \item{\code{nh_max_velocity}} {Maximal physiologically plausible velocity in °/s. Defaults to \code{1000}.}
+#' \item{\code{nh_max_acceleration}} {Maximal physiologically plausible acceleration in °/s<sup>2</sup>. Defaults to \code{100000}.}
+#' \item{\code{nh_initial_velocity_threshold}} {Initial velocity threshold in °/s. Defaults to \code{100}.}
+#' }
+#'
 #' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param vel Velocity data.frame with columns \code{x}, \code{y}, \code{amp}.
 #' @param acc Acceleration data.frame with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
 #' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
-#' @param sg_filter_order Order of Savitzky-Golay filter. Please refer to Nyström and Holmqvist (2010) for details.
-#' @param max_velocity Maximal physiologically plausible velocity in °/s. Please refer to Nyström and Holmqvist (2010) for details.
-#' @param max_acceleration Maximal physiologically plausible acceleration in °/s*s. Please refer to Nyström and Holmqvist (2010) for details.
+#' @param options Names list with method options. See _details_ for further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`
@@ -17,16 +23,21 @@
 #' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
 #' @examples 
 #' # Do not run this function directly, use vote_on_samples() or extract_saccades()
-extract_ms_nh <- function(x,
-                          y,
-                          vel,
-                          acc,
-                          sample_rate,
-                          trial,
-                          sg_filter_order = 2,
-                          max_velocity = 1000,
-                          max_acceleration = 100000,
-                          initial_velocity_threshold = 100){
+method_nh <- function(x,
+                      y,
+                      vel,
+                      acc,
+                      sample_rate,
+                      trial,
+                      options){
+
+  # extracting options or using defaults
+  sg_filter_order <- option_or_default(options, "nh_sg_filter_order", 2)
+  max_velocity <- option_or_default(options, "nh_max_velocity", 1000) 
+  max_acceleration <- option_or_default(options, "nh_max_acceleration", 100000)
+  initial_velocity_threshold <- option_or_default(options, "nh_initial_velocity_threshold", 100)
+  
+  # computing frame time step 
   delta_t_s <- 1 / sample_rate
   
   # --- compute and filter velocity and acceleration

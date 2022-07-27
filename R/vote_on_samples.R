@@ -43,7 +43,7 @@ vote_on_samples <- function(x,
   if (!is.list(methods)) stop("methods must be a list (not a vector) of method names or functions")
   internal_methods <- list("ek" = saccadr::extract_ms_ek,
                            "om" = saccadr::extract_ms_om,
-                           "nh" = saccadr::extract_ms_nh)
+                           "nh" = saccadr::method_nh)
   method_handle <- list()
   for(iM in 1:length(methods)){
     # figuring out whether we are calling internal function (string with its name)
