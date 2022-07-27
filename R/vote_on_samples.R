@@ -1,27 +1,35 @@
 #' Computes ensemble vote for each sample using selected methods.
 #' 
-#' This function is called by \code{\link{extract_microsaccades}} but can be used directly,
+#' This function is called by \code{\link{extract_saccades}} but can be used directly,
 #' if you are interested in the vote-per-sample.
 #' @param x Horizontal coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param y Vertical coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param sample_rate Sampling rate in Hz.
-#' @param methods A _list_ (not a vector!) with names of package methods (character) or external functions that
-#' implement sample classification (see vignette on using custom method). Package methods include 
+#' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
+#' implement sample classification (see vignette on using custom methods). Package methods include
 #' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
-#' converted to an average cyclopean image before microsaccades are extracted), \code{"monocular"} (microsaccades
-#' are extracted independently for each eye), \code{"merge"} (default, microsaccades are extracted for each eye
-#' independently but microsaccades from different eyes that temporally overlap are averaged into a binocular
-#' microsaccade). Note that \code{binocular = "merge"} is overridden by \code{normalize = FALSE},
+#' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
+#' are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
+#' independently but saccades from different eyes that temporally overlap are averaged into a binocular
+#' saccade). Note that \code{binocular = "merge"} is overridden by \code{normalize = FALSE},
 #' votes are left as they are per method and eye. 
 #' @param normalize Logical, whether to aggregate and normalize votes to 0..1 range. Note that
 #' \code{normalize = FALSE} overrides \code{binocular = "merge"}, votes are left as they are per method and eye.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
-#' @param options A named list with options for a specific method.
+#' @param options A named list with options, see documentation on specific method for details.
 #'
 #' @return list Either a list of matrices (one per eye) with votes for each method (\code{normalized = FALSE}) or
 #' a matrix with normalized (0..1) vote on each sample either for each eye or for single cyclopean or merged
 #' binocular time series (\code{normalized = TRUE}).
+#' @seealso \code{\link{extract_saccades}}, \code{\link{method_ek}}, \code{\link{method_om}}, \code{\link{method_nh}}
+#' @examples 
+#' data(single_trial)
+#' vote <- vote_on_samples(x = single_trial[['x']],
+#'                         y = single_trial[['y']],
+#'                         methods = list("ek", "om", "nh"),
+#'                         sample_rate = 500,
+#'                         normalize = FALSE)
 vote_on_samples <- function(x,
                             y,
                             sample_rate,
