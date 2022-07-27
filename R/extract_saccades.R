@@ -12,19 +12,16 @@
 #' independently but saccades from different eyes that temporally overlap are averaged into a binocular
 #' saccade). Note that \code{binocular = "merge"} is overridden by \code{normalize = FALSE},
 #' votes are left as they are per method and eye.
-#' @param vote_threshold Value between 0..1 defining a vote threshold for a saccade. The default (\code{vote_threshold = 1})
-#' means that _all_ methods must agree.
+#' @param vote_threshold Value between 0..1 defining a vote threshold for a saccade.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
-#' @param options A named list with options for a specific method.
+#' @param options A named list with options for a specific method, see documentation on specific method for details.
 #'
-#' @return data.frame
+#' @return \code{data.frame}
 #' @export
 #'
 #' @examples
 #' data(single_trial)
-#' 
-#' # extract microsaccades from a single trial data using the default method
-#' ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
+#' ms <- extract_saccades(single_trial$x, single_trial$y, 500)
 extract_saccades <- function(x,
                              y,
                              sample_rate,

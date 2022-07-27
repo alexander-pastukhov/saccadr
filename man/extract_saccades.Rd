@@ -34,22 +34,19 @@ independently but saccades from different eyes that temporally overlap are avera
 saccade). Note that \code{binocular = "merge"} is overridden by \code{normalize = FALSE},
 votes are left as they are per method and eye.}
 
-\item{vote_threshold}{Value between 0..1 defining a vote threshold for a saccade. The default (\code{vote_threshold = 1})
-means that _all_ methods must agree.}
+\item{vote_threshold}{Value between 0..1 defining a vote threshold for a saccade.}
 
 \item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.}
 
-\item{options}{A named list with options for a specific method.}
+\item{options}{A named list with options for a specific method, see documentation on specific method for details.}
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
 Extracts saccades from samples using votes from selected algorithms.
 }
 \examples{
 data(single_trial)
-
-# extract microsaccades from a single trial data using the default method
-ms <- extract_microsaccades(single_trial$x, single_trial$y, 500)
+ms <- extract_saccades(single_trial$x, single_trial$y, 500)
 }
