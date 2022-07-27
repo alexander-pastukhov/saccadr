@@ -8,11 +8,12 @@ vote_on_samples(
   x,
   y,
   sample_rate,
-  methods = list("ek", "om", "nh"),
-  binocular = "merge",
-  normalize = TRUE,
   trial = NULL,
-  options = NULL
+  methods = list("ek", "om", "nh"),
+  options = NULL,
+  velocity_time_window = 20,
+  binocular = "merge",
+  normalize = TRUE
 )
 }
 \arguments{
@@ -22,9 +23,15 @@ vote_on_samples(
 
 \item{sample_rate}{Sampling rate in Hz.}
 
+\item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.}
+
 \item{methods}{A \emph{list} (not a vector!) with names of package methods (character) or external functions that
 implement sample classification (see vignette on using custom methods). Package methods include
 Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).}
+
+\item{options}{A named list with options, see documentation on specific method for details.}
+
+\item{velocity_time_window}{Time window for computing velocity and acceleration in milliseconds.}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
@@ -35,10 +42,6 @@ votes are left as they are per method and eye.}
 
 \item{normalize}{Logical, whether to aggregate and normalize votes to 0..1 range. Note that
 \code{normalize = FALSE} overrides \code{binocular = "merge"}, votes are left as they are per method and eye.}
-
-\item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.}
-
-\item{options}{A named list with options, see documentation on specific method for details.}
 }
 \value{
 list Either a list of matrices (one per eye) with votes for each method (\code{normalized = FALSE}) or

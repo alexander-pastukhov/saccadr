@@ -34,8 +34,8 @@ method_om <- function(x,
   # get options
   minimal_inter_peak_time_ms <- option_or_default(options, "om_minimal_inter_peak_time_ms", 30)
   maximal_peaks_per_second <- option_or_default(options, "om_maximal_peaks_per_second", 5)
-  velocity_threshold_deg_per_sec <- option_or_default(option, "om_velocity_threshold_deg_per_sec", 3)
-  pca_variance_threshold <-  option_or_default(option, "om_pca_variance_threshold", 0.05)
+  velocity_threshold_deg_per_sec <- option_or_default(options, "om_velocity_threshold_deg_per_sec", 3)
+  pca_variance_threshold <-  option_or_default(options, "om_pca_variance_threshold", 0.05)
   
   
   # --- identify local peaks within each trial

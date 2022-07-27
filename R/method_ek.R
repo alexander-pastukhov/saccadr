@@ -47,18 +47,18 @@ method_ek <- function(x,
   vel_norm <- sqrt((vel[['x']]/ vel_threshold[1])^2 + (vel[['y']] / vel_threshold[2])^2)
 
   # marking out consecutive periods of high (above threshold) velocity
-  thresholded_periods <- rle(vel_norm > 1.0)
+  # thresholded_periods <- rle(vel_norm > 1.0)
   
-  # labeling potential saccade samples: either super-threshold or brief sub-threshold periods
-  thresholded_periods$values <- (thresholded_periods$values == TRUE) |  # 1. super-threshold
-                                (thresholded_periods$values == FALSE &  # 2. or sub-threshold
-                                 lead(thresholded_periods$values) == TRUE & # but surrounded by super-threshold 
-                                 lag(thresholded_periods$values) == TRUE &  # on both sides
-                                 thresholded_periods$lengths <= minimal_separation_in_samples) # and shorter then minimal fixation
-  marked_samples <- inverse.rle(thresholded_periods)
-  
+  # # labeling potential saccade samples: either super-threshold or brief sub-threshold periods
+  # thresholded_periods$values <- (thresholded_periods$values == TRUE) |  # 1. super-threshold
+  #                               (thresholded_periods$values == FALSE &  # 2. or sub-threshold
+  #                                lead(thresholded_periods$values) == TRUE & # but surrounded by super-threshold 
+  #                                lag(thresholded_periods$values) == TRUE &  # on both sides
+  #                                thresholded_periods$lengths <= minimal_separation_in_samples) # and shorter then minimal fixation
+  # marked_samples <- inverse.rle(thresholded_periods)
+
   # retaining only potential saccades that are longer than minimal required duration
-  potential_saccades <- rle(marked_samples)
+  potential_saccades <- rle(vel_norm > 1.0)
   potential_saccades$values <- potential_saccades$values == TRUE & potential_saccades$lengths >= minimal_duration_in_samples
   inverse.rle(potential_saccades)
 }

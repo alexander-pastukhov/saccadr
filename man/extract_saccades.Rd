@@ -8,12 +8,14 @@ extract_saccades(
   x,
   y,
   sample_rate,
-  velocity_time_window = 20,
-  methods = list("ek", "om", "nh"),
-  binocular = "merge",
-  vote_threshold = (1 - length(methods))/length(methods) * 0.99,
   trial = NULL,
-  options = NULL
+  methods = list("ek", "om", "nh"),
+  options = NULL,
+  velocity_time_window = 20,
+  binocular = "merge",
+  vote_threshold = ((length(methods) - 1)/length(methods)) * 0.99,
+  minimal_duration_ms = 12,
+  minimal_separation_ms = 12
 )
 }
 \arguments{
@@ -23,9 +25,15 @@ extract_saccades(
 
 \item{sample_rate}{Sampling rate in Hz.}
 
+\item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.}
+
 \item{methods}{A \emph{list} (not a vector!) with names of package methods (character) or external functions that
 implement sample classification (see vignette on using custom methods). Package methods include
 Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).}
+
+\item{options}{A named list with options for a specific method, see documentation on specific method for details.}
+
+\item{velocity_time_window}{Time window for computing velocity and acceleration in milliseconds.}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
@@ -35,10 +43,6 @@ saccade). Note that \code{binocular = "merge"} is overridden by \code{normalize 
 votes are left as they are per method and eye.}
 
 \item{vote_threshold}{Value between 0..1 defining a vote threshold for a saccade.}
-
-\item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.}
-
-\item{options}{A named list with options for a specific method, see documentation on specific method for details.}
 }
 \value{
 \code{data.frame}

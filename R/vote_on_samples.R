@@ -5,9 +5,12 @@
 #' @param x Horizontal coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param y Vertical coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param sample_rate Sampling rate in Hz.
+#' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 #' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
 #' implement sample classification (see vignette on using custom methods). Package methods include
 #' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
+#' @param options A named list with options, see documentation on specific method for details.
+#' @param velocity_time_window Time window for computing velocity and acceleration in milliseconds.
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
 #' are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
@@ -16,8 +19,6 @@
 #' votes are left as they are per method and eye. 
 #' @param normalize Logical, whether to aggregate and normalize votes to 0..1 range. Note that
 #' \code{normalize = FALSE} overrides \code{binocular = "merge"}, votes are left as they are per method and eye.
-#' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
-#' @param options A named list with options, see documentation on specific method for details.
 #'
 #' @return list Either a list of matrices (one per eye) with votes for each method (\code{normalized = FALSE}) or
 #' a matrix with normalized (0..1) vote on each sample either for each eye or for single cyclopean or merged
@@ -33,11 +34,12 @@
 vote_on_samples <- function(x,
                             y,
                             sample_rate,
-                            methods = list("ek", "om", "nh"),
-                            binocular = "merge",
-                            normalize = TRUE,
                             trial = NULL,
-                            options = NULL) {
+                            methods = list("ek", "om", "nh"),
+                            options = NULL,
+                            velocity_time_window = 20,
+                            binocular = "merge",
+                            normalize = TRUE) {
   # Converting x and y to matrices, so we can treat monocular and binocular cases the same way.
   x <- input_to_matrix(x)
   y <- input_to_matrix(y)
@@ -110,11 +112,8 @@ vote_on_samples <- function(x,
     acc_df[['amp']] <- sqrt(acc_df[['x']]^2 + acc_df[['y']]^2)
     
     for(iM in 1:length(methods)){
-      # turning options into parameters passed via do.call (unused are simply ignored in R)
-      call_arguments <- c(list(x = x[, iEye], y = y[, iEye], vel=vel_df, acc=acc_df, sample_rate = sample_rate, trial = trial), options)
-      
       # record votes for potential saccades
-      sample_vote_per_eye[[iEye]][, iM] <- do.call(method_handle[[iM]], call_arguments)
+      sample_vote_per_eye[[iEye]][, iM] <- method_handle[[iM]](x = x[, iEye], y = y[, iEye], vel=vel_df, acc=acc_df, sample_rate = sample_rate, trial = trial, options = options)
     }
   }
   
