@@ -18,6 +18,29 @@ compute_velocity <- function(x, trial, sample_rate, velocity_time_window){
   # and is at least three samples long.
   if (time_window_in_samples < 3) time_window_in_samples <- 3
   
-  # # compute velocity per trial.
+  # compute velocity per trial using Engbert and Kliegl (2003) formula
   compute_velocity_ek(x, trial, time_window_in_samples, delta_t)
+}
+
+#' Compute velocity for x, y, and its amplited 
+#'
+#' @param x vector with x coordinates in \emph{degrees of visual angle}
+#' @param y vector with y coordinates in \emph{degrees of visual angle}
+#' @param trial vector with trial index
+#' @param sample_rate sample rate in Hz
+#' @param velocity_time_window Time window for velocity computation in \emph{milliseconds}
+#'
+#' @return \code{data.frame} with columns \code{x}, \code{y}, and \code{amp}
+#' @export
+#'
+#' @examples
+#' compute_velocity_df(rnorm(1000), rnorm(1000), rep(1, 1000), 250, 20)
+compute_velocity_table <- function(x, y,  trial, sample_rate, velocity_time_window) {
+  vel_df <- data.frame(
+    x = compute_velocity(x, trial, sample_rate, velocity_time_window),
+    y = compute_velocity(y, trial, sample_rate, velocity_time_window)
+  )
+  vel_df[['amp']] <- sqrt(vel_df[['x']]^2 + vel_df[['y']]^2)
+  
+  vel_df
 }

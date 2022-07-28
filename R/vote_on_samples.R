@@ -93,42 +93,42 @@ vote_on_samples <- function(x,
   }
   
   # Computing saccades for one (monocular or cyclopean) eye at a time
-  sample_vote_per_eye <- list()
-  for(iEye in ncol(x)) sample_vote_per_eye[[iEye]] <- matrix(0, nrow = nrow(x), ncol = length(methods))
+  eye_data <- list()
 
   for(iEye in 1:ncol(x)) {
+    eye_data[[iEye]] <- list()
+    eye_data[[iEye]][['sample_vote']] <- matrix(0, nrow = nrow(x), ncol = length(methods))
+
     # compute velocity
-    vel_df <- data.frame(
-      x = compute_velocity(x[, iEye], trial, sample_rate, velocity_time_window),
-      y = compute_velocity(y[, iEye], trial, sample_rate, velocity_time_window)
-    )
-    vel_df[['amp']] <- sqrt(vel_df[['x']]^2 + vel_df[['y']]^2)
-    
+    eye_data[[iEye]][['vel_df']] <- compute_velocity_table(x[, iEye], y[, iEye], trial, sample_rate, velocity_time_window)
+
     # compute acceleration (for methods that require it)
-    acc_df <- data.frame(
-      x = compute_velocity(vel_df[['x']], trial, sample_rate, velocity_time_window),
-      y = compute_velocity(vel_df[['y']], trial, sample_rate, velocity_time_window)
-    )
-    acc_df[['amp']] <- sqrt(acc_df[['x']]^2 + acc_df[['y']]^2)
-    
+    eye_data[[iEye]][['acc_df']] <- compute_velocity_table(eye_data[[iEye]][['vel_df']][['x']], eye_data[[iEye]][['vel_df']][['y']], trial, sample_rate, velocity_time_window)
+
     for(iM in 1:length(methods)){
       # record votes for potential saccades
-      sample_vote_per_eye[[iEye]][, iM] <- method_handle[[iM]](x = x[, iEye], y = y[, iEye], vel=vel_df, acc=acc_df, sample_rate = sample_rate, trial = trial, options = options)
+      eye_data[[iEye]][['sample_vote']][, iM] <- method_handle[[iM]](x = x[, iEye], y = y[, iEye], vel=eye_data[[iEye]][['vel_df']], eye_data[[iEye]][['acc_df']], sample_rate = sample_rate, trial = trial, options = options)
     }
   }
   
   #  if no normalization required, return votes per method and eye
-  if (!normalize) return(sample_vote_per_eye)
+  if (!normalize) return(eye_data)
   
   # normalize votes per eye
-  sample_vote <- matrix(0, nrow = nrow(x), ncol = ncol(x))
-  for(iEye in 1:ncol(x)) sample_vote[, iEye] <- rowMeans(sample_vote_per_eye[[iEye]])
+  for(iEye in 1:ncol(x)) eye_data[[iEye]][['sample_vote']] <- rowMeans(eye_data[[iEye]][['sample_vote']])
   
-  # if binocular processing was selected, average over normalized votes
+  # if binocular processing was selected, average over normalized votes, velocity and acceleration 
   if ( ncol(x) == 2 & binocular == "merge") {
-    sample_vote <- rowMeans(sample_vote)
+      return(list(
+        'sample_vote' = (eye_data[[1]][['sample_vote']] + eye_data[[2]][['sample_vote']]) / 2.0,
+        'vel_df' = data.frame('x' = (eye_data[[1]][['vel_df']][['x']] + eye_data[[2]][['vel_df']][['x']]) / 2.0,
+                              'y' = (eye_data[[1]][['vel_df']][['y']] + eye_data[[2]][['vel_df']][['y']]) / 2.0,
+                              'amp' = (eye_data[[1]][['vel_df']][['amp']] + eye_data[[2]][['vel_df']][['amp']]) / 2.0),
+        'acc_df' = data.frame('x' = (eye_data[[1]][['acc_df']][['x']] + eye_data[[2]][['acc_df']][['x']]) / 2.0,
+                              'y' = (eye_data[[1]][['acc_df']][['y']] + eye_data[[2]][['acc_df']][['y']]) / 2.0,
+                              'amp' = (eye_data[[1]][['acc_df']][['amp']] + eye_data[[2]][['acc_df']][['amp']]) / 2.0)))
   }
   
   # returning normalized votes
-  sample_vote
+  eye_data
 }
