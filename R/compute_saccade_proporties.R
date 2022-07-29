@@ -4,7 +4,7 @@
 #' @export
 #'
 #' @examples
-compute_saccade_proporties <- function(){
+compute_saccade_proporties <- function(x, y, trial, vel, acc){
   
   # computing saccades' properties
   saccades %>%

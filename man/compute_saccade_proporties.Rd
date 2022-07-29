@@ -4,7 +4,7 @@
 \alias{compute_saccade_proporties}
 \title{Compute saccade properties}
 \usage{
-compute_saccade_proporties()
+compute_saccade_proporties(x, y, trial, vel, acc)
 }
 \description{
 Compute saccade properties

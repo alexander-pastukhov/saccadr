@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_saccades.R
 \name{extract_saccades}
 \alias{extract_saccades}
-\title{Extracts saccades from samples using votes from selected algorithms.}
+\title{Extract saccades from samples using votes from selected methods.}
 \usage{
 extract_saccades(
   x,
@@ -15,7 +15,8 @@ extract_saccades(
   binocular = "merge",
   vote_threshold = ((length(methods) - 1)/length(methods)) * 0.99,
   minimal_duration_ms = 12,
-  minimal_separation_ms = 12
+  minimal_separation_ms = 12,
+  return_votes = FALSE
 )
 }
 \arguments{
@@ -45,10 +46,22 @@ votes are left as they are per method and eye.}
 \item{vote_threshold}{Value between 0..1 defining a vote threshold for a saccade.}
 }
 \value{
-\code{data.frame}
+\code{data.frame} MORE INFO
 }
 \description{
-Extracts saccades from samples using votes from selected algorithms.
+Extract saccades from samples using votes from selected methods. Each method votes whether
+a given sample belongs to a saccade. Next, saccades are identified via a majority vote using the 
+\code{vote_threshold} parameter, as well as a minimal duration and minimal temporal separation criteria.
+
+By default, ensemble includes methods proposed by Engbret & Kliegl (2003) (\code{"ek"}),
+Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"}). However, it can be extended
+via custom methods, see "Implementing custom methods" vignette.
+
+By default, the function returns a table with identified saccades but can return a matrix with method's votes
+per sample instead (\code{return_votes = TRUE}).
+}
+\details{
+DETAILS ON RETURN SACCADE PROPERTIES
 }
 \examples{
 data(single_trial)
