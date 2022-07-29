@@ -44,7 +44,7 @@ extract_saccades <- function(x,
                              options = NULL,
                              velocity_time_window = 20,
                              binocular = "merge",
-                             vote_threshold = ((length(methods) - 1) / length(methods)) * 0.99,
+                             vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) - 1) / length(methods)) * 0.99),
                              minimal_duration_ms = 12,
                              minimal_separation_ms = 12,
                              return_votes = FALSE){
