@@ -2,7 +2,6 @@
 
 export("%>%")
 export(check_that_lengths_match)
-export(compute_saccade_proporties)
 export(compute_velocity)
 export(compute_velocity_ek)
 export(compute_velocity_table)
