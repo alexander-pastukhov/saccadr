@@ -1,0 +1,49 @@
+---
+title: "Using Sample Votes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using Sample Votes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(saccadr)
+```
+
+Function `extract_saccades()` has an option to return sample votes for each method via `return_votes = TRUE` parameter. Here is an example of using them for internally implemented methods.
+
+
+```{r}
+library(ggplot2)
+
+data("single_trial")
+
+methods_to_use <- list("ek", "om", "nh")
+votes <- saccadr::extract_saccades(x = single_trial$x,
+                                   y = single_trial$y,
+                                   sample_rate = 500,
+                                   methods = methods_to_use,
+                                   return_votes = TRUE)
+
+single_trial_with_votes <- list()
+for(imethod in 1:length(methods_to_use)){
+  single_trial_with_votes[[imethod]] <- single_trial
+  single_trial_with_votes[[imethod]]$Method <- toupper(methods_to_use[[imethod]])
+  single_trial_with_votes[[imethod]]$IsSaccade <- votes[, imethod]
+  single_trial_with_votes[[imethod]]$IsSaccade <- factor(single_trial_with_votes[[imethod]]$IsSaccade == 1,
+                                                         levels = c(TRUE, FALSE))
+}
+
+ggplot(do.call("rbind", single_trial_with_votes), 
+       aes(x = x, y = y, color = IsSaccade)) +
+  geom_point() +
+  facet_grid(. ~ Method)
+```
