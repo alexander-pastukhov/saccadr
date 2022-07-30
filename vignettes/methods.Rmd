@@ -1,7 +1,7 @@
 ---
-title: "Methods"
+title: "Implemented Methods"
 output: rmarkdown::html_vignette
-bibliography: methods.bib 
+bibliography: methods.bib
 vignette: >
   %\VignetteIndexEntry{Methods}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,11 +15,49 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-# library(saccadr)
-```
+The package implements following methods
 
-## "ek": Engbert and Kliegl (2003)
+* @EngbertKliegl2003
+* @Otero-Millan2014
+* @NystromHolmqvist2010
+
+Each methods has additional parameters that can be passed via `options` argument of `extract_saccades()` function.
+
+## @EngbertKliegl2003
+The algorithm labels a sample as a saccade, if velocity, measured in units of its standard deviation, exceeds a predefined threshold (defaults to $6$) and duration of a super-threshold periods exceed minimal duration (defauts to $12$ milliseconds). This method makes no assumptions about velocity in the units of degrees per second and can be used on any data (e.g., where samples encode gaze in screen position units). 
+
+Only a monocular version of the algorithm is implemented with binocular saccades computed using overlapping votes from two eyes. For method details and rationale for default parameter values refer to @EngbertKliegl2003.
+
+Parameters:
+
+* `ek_velocity_threshold` Velocity threshold for saccade detection in standard deviations. Defaults to $6$.
+* `ek_sd_fun` Function used to compute standard deviation for velociti0es. Defaults to `sd_via_median_estimator()` that implements formula #2 in @EngbertKliegl2003. Can be replaced with `sd()`, `mad()`, or a custom function.
+* `ek_minimal_duration_ms` Minimal duration of a saccade in milliseconds. Defaults to $12$.
+* `ek_minimal_separation_ms` A minimal required time gap between saccades. Defaults to $12$.
+
+## @Otero-Millan2014
+The algorithm:
+
+1. Detects local peaks.
+2. Filters them based on a minimal inter-peak interval (defaults to $30$ ms) and maximal allowed saccade rate (defaults to $5$ Hz).
+3. Identifies onset and offset of a potential sacccade using an absolute velocity threshold in degrees per second.
+4. Computes peak velocity and peak acceleration before and after the peak velocity was reached.
+5. Rotates velocity and peak acceleration via PCA and retains components above a predefined threshold for explained variance.
+6. Performs a cluster analysis on remaining components for $2$, $3$, $4$ picking the solution with the smallest silhouette. 
+7. Saccades are identified as a cluster with highest average peak velocity.
+
+For method details and rationale for default parameter values refer to @Otero-Millan2014.
+
+Parameters:
+
+* `om_minimal_inter_peak_time_ms` Minimal inter-peak interval in milliseconds. Defaults to $30$
+* `om_maximal_peaks_per_second` Maximal allowed number of peaks per second. Defaults to $5$.
+* `om_velocity_threshold_deg_per_sec` Threshold saccade velocity in °/s.  Defaults to $3$.
+* `om_pca_variance_threshold` Minimal variance explained by retained rotated components. Defaults to $0.05$.
+
+
+
+
 
 Below is a brief description of the method as implemented in the package, please refer to @EngbertKliegl2003 for rationale and further details.
 
