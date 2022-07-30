@@ -24,7 +24,17 @@ The package implements following methods
 Each methods has additional parameters that can be passed via `options` argument of `extract_saccades()` function.
 
 ## @EngbertKliegl2003
-The algorithm labels a sample as a saccade, if velocity, measured in units of its standard deviation, exceeds a predefined threshold (defaults to $6$) and duration of a super-threshold periods exceed minimal duration (defauts to $12$ milliseconds). This method makes no assumptions about velocity in the units of degrees per second and can be used on any data (e.g., where samples encode gaze in screen position units). 
+The algorithm labels a sample as a saccade if velocity, measured in units of its standard deviation (see below), exceeds a predefined threshold (defaults to $6$) and duration of a super-threshold period exceed a minimal duration (defaults to $12$ milliseconds). This method makes no assumptions about velocity in the units of degrees per second and can be used on any data (e.g., where samples encode gaze in screen position units).
+
+The standard deviation is computed following a formula #2 in @EngbertKliegl2003 as
+```r
+sqrt(median(x^2) - median(x)^2)
+```
+
+However, if the value is smaller than [`.Machine$double.eps`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/zMachine.html), it is recomputed via a mean estimator
+```r
+sqrt(mean(x^2) - mean(x)^2)
+```
 
 Only a monocular version of the algorithm is implemented with binocular saccades computed using overlapping votes from two eyes. For method details and rationale for default parameter values refer to @EngbertKliegl2003.
 
@@ -55,6 +65,7 @@ Parameters:
 * `om_velocity_threshold_deg_per_sec` Threshold saccade velocity in °/s.  Defaults to $3$.
 * `om_pca_variance_threshold` Minimal variance explained by retained rotated components. Defaults to $0.05$.
 
+## @NystromHolmqvist2010
 
 
 
@@ -70,27 +81,6 @@ Below is a brief description of the method as implemented in the package, please
 7. Merge potential saccades that are less than `minimal_separation_ms` milliseconds apart. Note that this step is optional as it was _not used_ in @EngbertKliegl2003. Therefore by default `minimal_separation_ms = 0`, so no merging is performed.
 8. Drop any potential saccades that are shorter than `minimal_duration_ms` milliseconds long. This parameter defaults to `minimal_duration_ms = 12` to match minimal duration of 3 samples (each 4 ms long) used in @EngbertKliegl2003.
 
-### Velocity computation {#ek-vel}
-Horizontal and vertical velocity components are computed as
-$$v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}$$
-where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) that translates into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
-$$\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=$$
-$$\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=$$
-
-$$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
-$$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
-
-As noted in @Otero-Millan2014, this is equivalent to smoothing $x$ with a normalized Bartlett window (n=6 for five-sample velocity computation) and differentiating, see the code below.
-```{r eval=FALSE}
-# assuming vector `x` and a scalar `sample_rate`
-barlett_window <- signal::bartlett(6)
-smoothed_x <- signal::filter(barlett_window/sum(barlett_window), 1, x)
-dx <- diff(smoothed_x) * sample_rate
-v <- rep(0, length(x))
-v[1:(length(x)-3)] = dx[3:(length(x)-1)]
-```
-
-However, `signal::filter()` cannot handle time-series with missing values (`NA`) that 
 
 ### Standard deviation via median estimator {#ek-sd}
 The standard deviation is computed following a formula 2 in @EngbertKliegl2003 as
