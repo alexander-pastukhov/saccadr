@@ -88,26 +88,23 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">compute_velocity</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span><span class="op">)</span>, <span class="fl">500</span>, <span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]           NA           NA           NA           NA           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [6]           NA   26.5740130  -17.5722117  -57.6849243 -114.4887539</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [11] -101.5801533  -85.8069106  -41.7442429    0.8737415   67.9423153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [16]   69.9811178   51.3876391   13.1844683  -22.2274743  -24.3861512</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [21]   -7.8911200   29.9094594   65.2385141   82.3306217   93.8720466</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [26]   76.4615129   -4.0800286  -50.1144634  -39.5972704  -54.6389063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [31]  -61.4438253   -9.0461088   77.4935525  101.4619641   86.8803193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [36]   91.1368135   61.2439072   23.1368985  -34.4766853  -21.7294006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [41]   -7.7628177    6.4070908    3.9863605    7.7081664    4.1757213</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [46]  -25.3360939  -20.5661118  -22.0888004    1.7268311    4.1892507</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [51]   11.6884944   -4.3335274  -41.9913815  -33.5041961  -45.4387397</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [56]  -67.1746450  -43.1518708  -26.0021875  -44.4262468  -69.1627598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [61]  -26.1912939  -17.2510211   -9.2196856   -0.7022600   33.0280817</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [66]   22.2004887  -29.3656164  -34.2000628  -23.7358935  -26.2520300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [71]  -34.3147966   10.8911812   65.6940383   64.0199578   68.3404619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [76]   76.1055867   84.1533425   37.7439329   17.8984672  -20.8262481</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [81]  -27.7956118  -45.6374821  -41.6760253  -26.4860154    1.0401699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [86]   61.0487790   37.0090022   65.5823358   52.8293502   56.8947275</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [91]   -9.2306354  -28.9218897  -79.1355884  -87.8351758 -107.2554912</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [96]           NA           NA           NA           NA           NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]          NA          NA          NA          NA          NA          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [7]    3.148940   32.334284   38.601716   33.928757   11.439779   16.425446</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [13]  -17.545721    8.472307  -10.806150   25.283551   70.006397   55.549516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [19]   56.174756   63.451042    7.201064  -39.815976  -36.021086  -15.886344</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [25]  -27.823272  -30.122085   42.323524   78.098474    1.537419  -27.849045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31]   25.216724  -50.129044 -112.308203 -123.573566  -68.910199  -75.552020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37]  -87.184697  -35.218646   40.459384   30.355286   42.756720   93.240923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43]   48.175642   12.367451  -63.554455  -89.549438 -139.431019 -144.712064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] -114.640431  -22.197749   23.065433   40.189357   97.816651  104.247898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55]   92.911104   63.913251   38.646996   62.267999   25.589733    3.970148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61]   -8.070961  -24.572154  -30.586623  -34.414825  -37.394544  -55.382994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67]  -38.216115  -20.318001   -6.346668   15.108359   65.527927  111.539495</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73]   78.526740   55.504761   74.828759   19.329321  -31.915606  -39.268530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79]   19.313209  -40.856275  -24.848059   32.053861  -15.865172  -55.923746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85]  -40.944546  -37.504064  -66.289658  -50.841913   -3.562424   -6.159629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91]   -2.622850   18.325545   33.732115    6.095737   11.644658          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97]          NA          NA          NA          NA</span>
 </code></pre></div>
     </div>
   </div>
