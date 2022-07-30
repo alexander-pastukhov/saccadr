@@ -30,7 +30,7 @@ Extract saccades using an algorithm proposed by Nyström and Holmqvist (2010) \d
 \details{
 Method options, please refer to Nyström and Holmqvist (2010) for details on parameters and the rationale for default values.
 \itemize{
-\item{\code{nh_sg_filter_order}} {Order of Savitzky-Golay filter. Defaults to \code{2}}.
+\item{\code{nh_sg_filter_order}} {Order of Savitzky-Golay filter. Defaults to \code{2}.}
 \item{\code{nh_max_velocity}} {Maximal physiologically plausible velocity in °/s. Defaults to \code{1000}.}
 \item{\code{nh_max_acceleration}} {Maximal physiologically plausible acceleration in °/s². Defaults to \code{100000}.}
 \item{\code{nh_initial_velocity_threshold}} {Initial velocity threshold in °/s. Defaults to \code{100}.}

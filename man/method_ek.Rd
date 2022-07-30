@@ -30,7 +30,7 @@ Extract saccades using an algorithm proposed by Engbert and Kliegl (2003) \doi{1
 \details{
 Method options, please refer to Engbert and Kliegl (2003) for details on parameters and the rationale for default values.
 \itemize{
-\item{\code{ek_velocity_threshold}} {Velocity threshold for saccade detection in medians. Defaults to \code{6}.}
+\item{\code{ek_velocity_threshold}} {Velocity threshold for saccade detection in standard deviations. Defaults to \code{6}.}
 \item{\code{ek_sd_fun}} {Function used to compute standard deviation for velocities. Defaults to \code{\link{sd_via_median_estimator}}, as per formula #2 in Engbert and Kliegl (2003). Can be replaced with \code{mad}, \code{sd}, etc.}
 \item{\code{ek_minimal_duration_ms}} {Minimal duration of a saccade in milliseconds. Defaults to \code{12}.}
 \item{\code{ek_minimal_separation_ms}} {A minimal required time gap between saccades. Defaults to \code{12}.}
