@@ -3,20 +3,27 @@
 #' @description Extract saccades from samples using votes from selected methods. Each method votes whether
 #' a given sample belongs to a saccade. Next, saccades are identified via a majority vote using the 
 #' \code{vote_threshold} parameter, as well as a minimal duration and minimal temporal separation criteria.
-#' 
+#' Please note that units of the gaze samples must be in  \strong{degrees of visual angle}. The units are important
+#' as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds.
+#'  
 #' By default, ensemble includes methods proposed by Engbret & Kliegl (2003) (\code{"ek"}),
-#' Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"}). However, it can be extended
-#' via custom methods, see "Implementing custom methods" vignette.
+#' Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"}), 
+#' see \emph{Implemented Methods} vignette. However, it can be extended
+#' via custom methods, see \emph{Using Custom Methods} vignette.
 #' 
 #' By default, the function returns a table with identified saccades but can return a matrix with method's votes
 #' per sample instead (\code{return_votes = TRUE}).
 #'
 #' @param x Horizontal coordinate, either a vector for monocular data or a two-column matrix for binocular data.
 #' @param y Vertical coordinate, either a vector for monocular data or a two-column matrix for binocular data.
-#' @param sample_rate Sampling rate in Hz.
+#' @param sample_rate Sampling rate in Hz. It is assumed to be common for the entire time series.
+#' If the time series contains chunks (trials) that were recorded using different acquisition rate
+#' (e.g., SR Research Eyelink allows to set different acquisition rate for each recording / trial),
+#' you would need to split the time series and analyse them separately.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
+#' Velocity, acceleration, and saccades themselves are computed respecting trial borders. 
 #' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
-#' implement sample classification (see vignette on using custom methods). Package methods include
+#' implement sample classification (see \emph{Using Custom Methods} vignette). Package methods include
 #' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
 #' @param options A named list with options for a specific method, see documentation on specific method for details.
 #' @param velocity_time_window Time window for computing velocity and acceleration in milliseconds.
@@ -24,18 +31,55 @@
 #' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
 #' are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
 #' independently but saccades from different eyes that temporally overlap are averaged into a binocular
-#' saccade). Note that \code{binocular = "merge"} is overridden by \code{normalize = FALSE},
-#' votes are left as they are per method and eye.
+#' saccade).
 #' @param vote_threshold Value between 0..1 defining a vote threshold for a saccade.
+#' By default, all but one method (\eqn{threshold = \frac{N-1}{N}}
+#' where N is number of methods used) must agree for a sample to be considered for a saccade.
+#' Threshold of 1 is applied if a single method is used.
+#' @param minimal_duration_ms Minimal duration of a saccade in milliseconds. Shorter candidate saccades are discarded,
+#' @param minimal_separation_ms Minimal time separation between saccades in milliseconds. Saccades that are
+#' separated by a shorter interval of "not a saccade" votes, will be merged including that period.
+#' @param return_votes Logical. Whether function should return extracted microsaccades (\code{FALSE}, default)
+#' or votes per sample (\code{TRUE}). 
 #'
-#' @return \code{data.frame} MORE INFO
-#' @details DETAILS ON RETURN SACCADE PROPERTIES
+#' @return A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
+#' Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
+#' iput, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
+#'  columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
+#'  \code{list} with same matrices but per eye.
+#' @details Variables that describe saccade
+#' \itemize{
+#' \item{\code{Trial}} Trial index.
+#' \item{\code{Eye}} {\code{"Monocular"} for monocular inputs. \code{"Cyclopean"} for binocular data that
+#' was averaged \emph{before} applying algorithms. \code{"Binocular"} for binocular data with votes
+#' averaged \emph{after} applying algorithms. \code{"Left"} or \code{"Right"} for binocular data
+#' when eyes are processed independently.}
+#' \item{\code{OnsetSample}} {Index of the first sample.}
+#' \item{\code{OffsetSample}} {Index of the last sample.}
+#' \item{\code{Onset}} {Onset time relative to the trial start in milliseconds.}
+#' \item{\code{Offset}} {Offset time relative to the trial start in milliseconds.}
+#' \item{\code{Duration}} {Duration in milliseconds.}
+#' \item{\code{DisplacementX}} {Horizontal displacement measured from the \emph{first} to the \emph{last} sample.}
+#' \item{\code{DisplacementY}} {Vertical displacement measured from the \emph{first} to the \emph{last} sample.}
+#' \item{\code{Displacement}} {Displacement magnitude measured from the \emph{first} to the \emph{last} sample.}
+#' \item{\code{DisplacementPhi}} {Displacement direction measured from the \emph{first} to the \emph{last} sample.}
+#' \item{\code{AmplitudeX}} {Horizontal displacement measured from the \emph{leftmost} to the \emph{rightmost} sample.}
+#' \item{\code{AmplitudeY}} {Vertical displacement measured from the \emph{lowest} to the \emph{uppermost} sample.}
+#' \item{\code{Amplitude}} {Displacement magnitude measured from the most extreme samples.}
+#' \item{\code{Amplitude}} {Displacement direction measured from the most extreme samples.}
+#' \item{\code{VelocityPeak}} {Peak velocity.}
+#' \item{\code{VelocityAvg}} {Average velocity.}
+#' \item{\code{AccelerationPeak}} {Peak acceleration.}
+#' \item{\code{AccelerationAvg}} {Average acceleration.}
+#' \item{\code{AccelerationStart}} {Peak acceleration \emph{before} peak velocity was reached.}
+#' \item{\code{AccelerationStop}} {Peak acceleration \emph{after} peak velocity was reached.}
+#' }
 #' @export
 #' @importFrom dplyr mutate group_by filter select relocate rowwise ungroup bind_rows
 #'
 #' @examples
 #' data(single_trial)
-#' ms <- extract_saccades(single_trial$x, single_trial$y, 500)
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
 extract_saccades <- function(x,
                              y,
                              sample_rate,
