@@ -37,8 +37,8 @@ Method options, please refer to Engbert and Kliegl (2003) for details on paramet
 }
 }
 \examples{
-# Do not run this function directly, use vote_on_samples() or extract_saccades()
+# Do not run this function directly, use extract_saccades() instead
 }
 \seealso{
-\code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
+\code{\link{extract_saccades}}
 }

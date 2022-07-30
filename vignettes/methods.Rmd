@@ -41,7 +41,7 @@ Only a monocular version of the algorithm is implemented with binocular saccades
 Parameters:
 
 * `ek_velocity_threshold` Velocity threshold for saccade detection in standard deviations. Defaults to $6$.
-* `ek_sd_fun` Function used to compute standard deviation for velociti0es. Defaults to `sd_via_median_estimator()` that implements formula #2 in @EngbertKliegl2003. Can be replaced with `sd()`, `mad()`, or a custom function.
+* `ek_sd_fun` Function used to compute standard deviation for velocities. Defaults to `sd_via_median_estimator()` that implements formula #2 in @EngbertKliegl2003. Can be replaced with `sd()`, `mad()`, or a custom function.
 * `ek_minimal_duration_ms` Minimal duration of a saccade in milliseconds. Defaults to $12$.
 * `ek_minimal_separation_ms` A minimal required time gap between saccades. Defaults to $12$.
 
@@ -50,7 +50,7 @@ The algorithm:
 
 1. Detect local velocity peaks.
 2. Filter them based on a minimal inter-peak interval (defaults to $30$ ms) and maximal allowed saccade rate (defaults to $5$ Hz).
-3. Identify onset and offset of a potential sacccade using an absolute velocity threshold in degrees per second (defaults to $3$).
+3. Identify onset and offset of a potential saccade using an absolute velocity threshold in degrees per second (defaults to $3$).
 4. Compute peak velocity and peak acceleration before and after the peak velocity was reached.
 5. Rotate velocity and peak acceleration via PCA and retain components above a predefined threshold for explained variance (defaults to $0.05$).
 6. Perform a cluster analysis on remaining components for $2$, $3$, $4$ picking the solution with the smallest silhouette. 

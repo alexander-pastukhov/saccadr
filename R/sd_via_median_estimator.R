@@ -13,6 +13,7 @@
 #'
 #' @return float
 #' @export
+#' @importFrom stats na.omit median 
 #'
 #' @examples
 #' sd_via_median_estimator(rnorm(100))

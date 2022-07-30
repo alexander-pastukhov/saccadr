@@ -20,9 +20,11 @@
 #' @importFrom magrittr `%>%`
 #' @importFrom dplyr group_by mutate n
 #' @importFrom tidyr nest unnest
-#' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
+#' @importFrom stats sd
+#' @importFrom rlang .data
+#' @seealso \code{\link{extract_saccades}}
 #' @examples 
-#' # Do not run this function directly, use vote_on_samples() or extract_saccades()
+#' # Do not run this function directly, use extract_saccades() instead
 method_nh <- function(x,
                       y,
                       vel,
@@ -42,23 +44,23 @@ method_nh <- function(x,
   
   # --- compute and filter velocity and acceleration
   samples <- data.frame(trial = trial,
-                      x = x,
-                      y = y) %>%
+                        x = x,
+                        y = y) %>%
     # adding overall index
     dplyr::mutate(irow = 1:n()) %>%
     
     # compute velocity and acceleration for each trial
-    dplyr::group_by(trial) %>%
-    dplyr::mutate(velx = (x - lag(x)) / delta_t_s,
-                  vely = (y - lag(y)) / delta_t_s,
-                  vel = sqrt(velx^2 + vely^2),
-                  accx = (velx - lag(velx)) / delta_t_s,
-                  accy = (vely - lag(vely)) / delta_t_s,
-                  acc = sqrt(accx^2 + accy^2)) %>%
+    dplyr::group_by(.data$trial) %>%
+    dplyr::mutate(velx = (.data$x - lag(x)) / delta_t_s,
+                  vely = (.data$y - lag(y)) / delta_t_s,
+                  vel = sqrt(.data$velx^2 + .data$vely^2),
+                  accx = (.data$velx - lag(.data$velx)) / delta_t_s,
+                  accy = (.data$vely - lag(.data$vely)) / delta_t_s,
+                  acc = sqrt(.data$accx^2 + .data$accy^2)) %>%
     
     # filter velocity
-    dplyr::mutate(vel = filter_via_savitzky_golay(vel, sg_filter_order),
-                  acc = filter_via_savitzky_golay(acc, sg_filter_order)) %>%
+    dplyr::mutate(vel = filter_via_savitzky_golay(.data$vel, sg_filter_order),
+                  acc = filter_via_savitzky_golay(.data$acc, sg_filter_order)) %>%
     
     # nest, so we can process each trial separately
     tidyr::nest()
@@ -100,7 +102,7 @@ method_nh <- function(x,
   }
   
   # --- identifying velocity threshold via iterative adjustment
-  all_samples <- unnest(samples, cols = c(data))
+  all_samples <- unnest(samples, cols = c("data"))
   newPT <- initial_velocity_threshold
   PT <- 2 * newPT
   while(abs(newPT - PT) > 1){
@@ -157,8 +159,7 @@ method_nh <- function(x,
 #' @keywords internal
 #'
 #' @examples
-#' x <- nrand(1000)
-#' filter_via_savitzky_golay(x, 2)
+#' filter_via_savitzky_golay(rnorm(1000), 2)
 filter_via_savitzky_golay <- function(x, sg_order){
   sg_length <- sg_order + 3 - sg_order %% 2
   x_shifted <- signal::sgolayfilt(x, p = sg_order, n = sg_length)

@@ -1,12 +1,13 @@
 #' Compute velocity based on Engbert & Kliegl (2003)
 #' @param x Vector of values
+#' @param trial Vector of trial indexes.
 #' @param sample_rate Sample rate of the recording in Hz.
 #' @param velocity_time_window Time window in milliseconds relative to the sample that is used  to compute the velocity.
 #' @return vector of float
 #' @export
 #'
 #' @examples
-#' compute_velocity(rnorm(100), 500, 20)
+#' compute_velocity(rnorm(100), rep(1, 100), 500, 20)
 compute_velocity <- function(x, trial, sample_rate, velocity_time_window){
   # single sample duration, Δt in formula #1 in Engbert & Kliegl (2003)
   delta_t <- 1 / sample_rate
@@ -34,7 +35,7 @@ compute_velocity <- function(x, trial, sample_rate, velocity_time_window){
 #' @export
 #'
 #' @examples
-#' compute_velocity_df(rnorm(1000), rnorm(1000), rep(1, 1000), 250, 20)
+#' compute_velocity_table(rnorm(1000), rnorm(1000), rep(1, 1000), 250, 20)
 compute_velocity_table <- function(x, y,  trial, sample_rate, velocity_time_window) {
   vel_df <- data.frame(
     x = compute_velocity(x, trial, sample_rate, velocity_time_window),

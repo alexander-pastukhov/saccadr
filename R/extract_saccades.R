@@ -19,7 +19,7 @@
 #' @param sample_rate Sampling rate in Hz. It is assumed to be common for the entire time series.
 #' If the time series contains chunks (trials) that were recorded using different acquisition rate
 #' (e.g., SR Research Eyelink allows to set different acquisition rate for each recording / trial),
-#' you would need to split the time series and analyse them separately.
+#' you would need to split the time series and analyze them separately.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 #' Velocity, acceleration, and saccades themselves are computed respecting trial borders. 
 #' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
@@ -44,7 +44,7 @@
 #'
 #' @return A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
 #' Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
-#' iput, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
+#' input, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
 #'  columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
 #'  \code{list} with same matrices but per eye.
 #' @details Variables that describe saccade
@@ -75,7 +75,8 @@
 #' \item{\code{AccelerationStop}} {Peak acceleration \emph{after} peak velocity was reached.}
 #' }
 #' @export
-#' @importFrom dplyr mutate group_by filter select relocate rowwise ungroup bind_rows
+#' @importFrom dplyr mutate group_by filter select relocate rowwise ungroup bind_rows case_when
+#' @importFrom rlang .data
 #'
 #' @examples
 #' data(single_trial)
@@ -211,7 +212,7 @@ extract_saccades <- function(x,
     data.frame(trial = trial) %>%
     dplyr::group_by(trial) %>%
     dplyr::mutate(TimeWithinTrial = 0:(n() - 1) * delta_t_ms) %>%
-    dplyr::pull(TimeWithinTrial)
+    dplyr::pull(.data$TimeWithinTrial)
 
   # labeling potential saccade samples: either super-threshold or brief sub-threshold periods
   eye_saccades <- list()
@@ -238,36 +239,36 @@ extract_saccades <- function(x,
                  LengthInSamples = potential_saccades$lengths) %>%
       
       # determine onset and offset in samples
-      dplyr::mutate(OnsetSample = cumsum(c(1, LengthInSamples[1:(n() - 1)])),
-                    OffsetSample = OnsetSample + LengthInSamples - 1) %>%
+      dplyr::mutate(OnsetSample = cumsum(c(1, .data$LengthInSamples[1:(n() - 1)])),
+                    OffsetSample = .data$OnsetSample + .data$LengthInSamples - 1) %>%
 
       # add trial information
-      dplyr::mutate(Trial = trial[OnsetSample]) %>%
-      dplyr::relocate(Trial) %>%
+      dplyr::mutate(Trial = trial[.data$OnsetSample]) %>%
+      dplyr::relocate("Trial") %>%
       
       # retain only saccades
-      dplyr::filter(IsSaccade) %>%
-      dplyr::select(-IsSaccade, -LengthInSamples) %>%
+      dplyr::filter(.data$IsSaccade) %>%
+      dplyr::select(-c("IsSaccade", "LengthInSamples")) %>%
       
       
       # compute onset/offset within trial and duration in milliseconds
-      dplyr::mutate(Onset = time_within_trial[OnsetSample],
-                    Offset = time_within_trial[OffsetSample],
-                    Duration = Offset - Onset) %>%
+      dplyr::mutate(Onset = time_within_trial[.data$OnsetSample],
+                    Offset = time_within_trial[.data$OffsetSample],
+                    Duration = .data$Offset - .data$Onset) %>%
       
       # compute x/y and velocity-based properties for each saccade
       dplyr::rowwise() %>%
       dplyr::mutate(DisplacementX = x[.data$OffsetSample[1], iEye] - x[.data$OnsetSample[1], iEye],
                     DisplacementY = y[.data$OffsetSample[1], iEye] - y[.data$OnsetSample[1], iEye],
-                    Displacement = sqrt(DisplacementX^2 + DisplacementY^2),
-                    DisplacementPhi = atan2(DisplacementY, DisplacementX),
+                    Displacement = sqrt(.data$DisplacementX^2 + .data$DisplacementY^2),
+                    DisplacementPhi = atan2(.data$DisplacementY, .data$DisplacementX),
                     
                     AmplitudeX = sign(which.max(x[.data$OnsetSample[1]:.data$OffsetSample[1], iEye]) - which.min(x[.data$OnsetSample[1]:.data$OffsetSample[1], iEye])) *
                                  (max(x[.data$OnsetSample[1]:.data$OffsetSample[1], iEye]) - min(x[.data$OnsetSample[1]:.data$OffsetSample[1], iEye])),
                     AmplitudeY = sign(which.max(y[.data$OnsetSample[1]:.data$OffsetSample[1], iEye]) - which.min(y[.data$OnsetSample[1]:.data$OffsetSample[1], iEye])) *
                                  (max(y[.data$OnsetSample[1]:.data$OffsetSample[1], iEye]) - min(y[.data$OnsetSample[1]:.data$OffsetSample[1], iEye])),
-                    Amplitude = sqrt(AmplitudeX^2 + AmplitudeY^2),
-                    AmplitudePhi = atan2(AmplitudeY, AmplitudeX),
+                    Amplitude = sqrt(.data$AmplitudeX^2 + .data$AmplitudeY^2),
+                    AmplitudePhi = atan2(.data$AmplitudeY, .data$AmplitudeX),
                     
                     iVelocityPeak = .data$OnsetSample[1]  + which.max(vel[[iEye]][['amp']][.data$OnsetSample[1]:.data$OffsetSample[1]]) - 1,
                     VelocityPeak =  max(vel[[iEye]][['amp']][.data$OnsetSample[1]:.data$OffsetSample[1]], na.rm = TRUE),
@@ -278,7 +279,7 @@ extract_saccades <- function(x,
                     AccelerationBreak = max(acc[[iEye]][['amp']][.data$iVelocityPeak[1]:.data$OffsetSample[1]], na.rm = TRUE)) %>%
       
       dplyr::ungroup() %>%
-      dplyr::select(-iVelocityPeak)
+      dplyr::select(-c("iVelocityPeak"))
   }
   
   return(dplyr::bind_rows(eye_saccades))

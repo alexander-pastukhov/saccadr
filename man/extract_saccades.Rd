@@ -28,7 +28,7 @@ extract_saccades(
 \item{sample_rate}{Sampling rate in Hz. It is assumed to be common for the entire time series.
 If the time series contains chunks (trials) that were recorded using different acquisition rate
 (e.g., SR Research Eyelink allows to set different acquisition rate for each recording / trial),
-you would need to split the time series and analyse them separately.}
+you would need to split the time series and analyze them separately.}
 
 \item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 Velocity, acceleration, and saccades themselves are computed respecting trial borders.}
@@ -63,7 +63,7 @@ or votes per sample (\code{TRUE}).}
 \value{
 A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
 Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
-iput, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
+input, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
  columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
  \code{list} with same matrices but per eye.
 }

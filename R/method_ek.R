@@ -16,9 +16,9 @@
 #' @param options Names list with method options. See \emph{details} for further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
-#' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
+#' @seealso \code{\link{extract_saccades}}
 #' @examples
-#' # Do not run this function directly, use vote_on_samples() or extract_saccades()
+#' # Do not run this function directly, use extract_saccades() instead
 method_ek <- function(x,
                       y,
                       vel,

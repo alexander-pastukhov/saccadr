@@ -24,5 +24,5 @@ compute_velocity_table(x, y, trial, sample_rate, velocity_time_window)
 Compute velocity for x, y, and its amplited
 }
 \examples{
-compute_velocity_df(rnorm(1000), rnorm(1000), rep(1, 1000), 250, 20)
+compute_velocity_table(rnorm(1000), rnorm(1000), rep(1, 1000), 250, 20)
 }

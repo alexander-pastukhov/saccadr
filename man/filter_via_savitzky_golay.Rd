@@ -18,7 +18,6 @@ vector of float
 Smooths signal using Savitzky-Golay and then shifts the filtered signal back
 }
 \examples{
-x <- nrand(1000)
-filter_via_savitzky_golay(x, 2)
+filter_via_savitzky_golay(rnorm(1000), 2)
 }
 \keyword{internal}

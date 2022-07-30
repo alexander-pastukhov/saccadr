@@ -17,13 +17,14 @@
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`
-#' @importFrom dplyr group_by mutate lag lead pull filter select
+#' @importFrom dplyr group_by mutate lag lead pull filter select arrange
 #' @importFrom tidyr nest unnest
 #' @importFrom stats prcomp kmeans
 #' @importFrom cluster silhouette
-#' @seealso \code{\link{vote_on_samples}}, \code{\link{extract_saccades}}
+#' @importFrom rlang .data
+#' @seealso \code{\link{extract_saccades}}
 #' @examples
-#' # Do not run this function directly, use vote_on_samples() or extract_saccades()
+#' # Do not run this function directly, use extract_saccades() instead
 method_om <- function(x,
                       y,
                       vel,
@@ -45,19 +46,19 @@ method_om <- function(x,
                irow = 1:nrow(vel)) %>%
     
     # peak computation must be trial border aware;
-    dplyr::group_by(trial) %>%
+    dplyr::group_by(.data$trial) %>%
     
     # create within trial time variable
     dplyr::mutate(t = (0:(n()-1)) * 1000 / sample_rate) %>%
     
     
     # maximum is a sample that is above velocity_threshold_deg_per_sec and is larger than immediate surround
-    dplyr::mutate(IsMaxima = vel > velocity_threshold_deg_per_sec &
-                             vel > dplyr::lag(vel, n = 1L) & 
-                             vel > dplyr::lead(vel, n = 1L)) %>%
+    dplyr::mutate(IsMaxima = .data$vel > velocity_threshold_deg_per_sec &
+                             .data$vel > dplyr::lag(vel, n = 1L) & 
+                             .data$vel > dplyr::lead(vel, n = 1L)) %>%
     # retain only peaks
-    dplyr::filter(IsMaxima) %>%
-    dplyr::select(!IsMaxima) %>%
+    dplyr::filter(.data$IsMaxima) %>%
+    dplyr::select(-c("IsMaxima")) %>%
     
     # nest them, so we get a separate table for each trial
     tidyr::nest()
@@ -95,8 +96,8 @@ method_om <- function(x,
   # back to single simple table
   selected_peaks <- 
     peaks %>%
-    unnest(cols = c(data)) %>%
-    arrange(irow)
+    tidyr::unnest(cols = c("data")) %>%
+    dplyr::arrange(.data$irow)
   
   
   # --- mark out sample that belong to peaks by starting at each peak
@@ -134,12 +135,12 @@ method_om <- function(x,
                Length = peak_samples$lengths) %>%
     
     # compute onset and offset for each period
-    dplyr::mutate(Onset = cumsum(c(1, Length[1:(n()-1)])),
-                  Offset = Onset + Length - 1) %>%
+    dplyr::mutate(Onset = cumsum(c(1, .data$Length[1:(n()-1)])),
+                  Offset = .data$Onset + .data$Length - 1) %>%
     
     # drop non-peaks
-    dplyr::filter(IsPeak) %>%
-    dplyr::select(!IsPeak)
+    dplyr::filter(.data$IsPeak) %>%
+    dplyr::select(-c("IsPeak"))
     
   # --- computing properties of potential saccades
   saccade_properties <- matrix(0, nrow = nrow(potential_saccades), ncol = 3)
