@@ -48,12 +48,12 @@ Parameters:
 ## @Otero-Millan2014
 The algorithm:
 
-1. Detects local peaks.
-2. Filters them based on a minimal inter-peak interval (defaults to $30$ ms) and maximal allowed saccade rate (defaults to $5$ Hz).
-3. Identifies onset and offset of a potential sacccade using an absolute velocity threshold in degrees per second.
-4. Computes peak velocity and peak acceleration before and after the peak velocity was reached.
-5. Rotates velocity and peak acceleration via PCA and retains components above a predefined threshold for explained variance.
-6. Performs a cluster analysis on remaining components for $2$, $3$, $4$ picking the solution with the smallest silhouette. 
+1. Detect local velocity peaks.
+2. Filter them based on a minimal inter-peak interval (defaults to $30$ ms) and maximal allowed saccade rate (defaults to $5$ Hz).
+3. Identify onset and offset of a potential sacccade using an absolute velocity threshold in degrees per second (defaults to $3$).
+4. Compute peak velocity and peak acceleration before and after the peak velocity was reached.
+5. Rotate velocity and peak acceleration via PCA and retain components above a predefined threshold for explained variance (defaults to $0.05$).
+6. Perform a cluster analysis on remaining components for $2$, $3$, $4$ picking the solution with the smallest silhouette. 
 7. Saccades are identified as a cluster with highest average peak velocity.
 
 For method details and rationale for default parameter values refer to @Otero-Millan2014.
@@ -68,30 +68,21 @@ Parameters:
 ## @NystromHolmqvist2010
 
 
+The algorithm:
 
+1. Compute velocity and acceleration from adjacent samples (it does not use pre-computed velocity and acceleration) and filter it using Savitzky-Golay filter (filter order defaults to $2$).
+2. Identify physiologically implausible velocity and acceleration peaks (defaults to $1000 \deg/s$ and $100000 \deg/s^2$).
+3. Identify noise onset/offset as samples around the implausible velocity/acceleration that a above median velocity. Exluce these samples from analysis.
+4. Identify velocity threshold $PT = mean(V_{subthreshold}) + 6 \cdot std(V_{subthreshold})$ via an iterative method starting at arbitrary $PT$ value (defaults to $100 \deg/s$). Stop when threshold change is below $1 \deg/s$.
+5. Identify saccades as periods with peaks peaks above threshold $PT$ and adjacent samples that are above $PT_{onset/offset} = mean(V_{subthreshold}) + 3 \cdot std(V_{subthreshold})$.
 
-Below is a brief description of the method as implemented in the package, please refer to @EngbertKliegl2003 for rationale and further details.
+For method details and rationale for default parameter values refer to @NystromHolmqvist2010.
 
-1. Compute horizontal and vertical velocity components ($v_x$ and $v_y$), see [details](#ek-vel) below.
-2. Compute standard deviation for velocity components ($\sigma_x$ and $\sigma_y$), see [details](#ek-sd) below.
-3. Normalize velocity components so that they are in the units of velocity threshold $\lambda \cdot \ \sigma_{x/y}$, where by default $\lambda=6$ (`velocity_threshold` parameter): $v_{nx/ny} = \frac{v_{x/y}}{\lambda \cdot \ \sigma_{x/y}}$.
-4. Compute normalized velocity $v_n = \sqrt{v_{nx}^2 + v_{ny}^2}$.
-5. Flag samples that exceed threshold velocity $v_n > 1$.
-6. Flag consecutive sequences of above-threshold samples as potential saccades.
-7. Merge potential saccades that are less than `minimal_separation_ms` milliseconds apart. Note that this step is optional as it was _not used_ in @EngbertKliegl2003. Therefore by default `minimal_separation_ms = 0`, so no merging is performed.
-8. Drop any potential saccades that are shorter than `minimal_duration_ms` milliseconds long. This parameter defaults to `minimal_duration_ms = 12` to match minimal duration of 3 samples (each 4 ms long) used in @EngbertKliegl2003.
+Parameters:
 
-
-### Standard deviation via median estimator {#ek-sd}
-The standard deviation is computed following a formula 2 in @EngbertKliegl2003 as
-```r
-sqrt(median(x^2) - median(x)^2)
-```
-
-However, if the value is smaller than [`.Machine$double.eps`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/zMachine.html), it is recomputed via a mean estimator
-```r
-sqrt(mean(x^2) - mean(x)^2)
-```
-
+* `nh_sg_filter_order` Order of Savitzky-Golay filter. Defaults to `2`.
+* `nh_max_velocity` Maximal physiologically plausible velocity in °/s. Defaults to `1000`.
+* `nh_max_acceleration` Maximal physiologically plausible acceleration in °/s². Defaults to `100000`.
+* `nh_initial_velocity_threshold` Initial velocity threshold in °/s. Defaults to `100`.
 
 ## References
