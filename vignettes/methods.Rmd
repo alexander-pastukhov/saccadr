@@ -3,7 +3,7 @@ title: "Implemented Methods"
 output: rmarkdown::html_vignette
 bibliography: methods.bib
 vignette: >
-  %\VignetteIndexEntry{Methods}
+  %\VignetteIndexEntry{Implemented Methods}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
