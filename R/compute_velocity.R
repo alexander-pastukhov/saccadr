@@ -20,7 +20,7 @@ compute_velocity <- function(x, trial, sample_rate, velocity_time_window){
   if (time_window_in_samples < 3) time_window_in_samples <- 3
   
   # compute velocity per trial using Engbert and Kliegl (2003) formula
-  compute_velocity_ek(x, trial, time_window_in_samples, delta_t)
+  compute_velocity_via_ek(x, trial, time_window_in_samples, delta_t)
 }
 
 #' Compute velocity for x, y, and its amplited 

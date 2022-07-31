@@ -17,3 +17,19 @@ compute_velocity_ek <- function(x, trial, time_window_in_samples, delta_t) {
     .Call('_saccadr_compute_velocity_ek', PACKAGE = 'saccadr', x, trial, time_window_in_samples, delta_t)
 }
 
+#' Compute velocity via Engbert & Kliegl (2003) algorithm.
+#'
+#' @description Compute velocity via Engbert & Kliegl (2003) algorithm.
+#' See formula #1 in the manuscript.
+#' 
+#' @param x Vector of coordinates
+#' @param trial Vector with trial labels, so that velocity is computed only within trials.
+#' @param time_window_in_samples Width of window for velocity computation in samples.
+#' @param delta_t Duration of a single frame (1 / sampling rate).
+#' 
+#' @return Velocity vector
+#' @export
+compute_velocity_via_ek <- function(x, trial, time_window_in_samples, delta_t) {
+    .Call('_saccadr_compute_velocity_via_ek', PACKAGE = 'saccadr', x, trial, time_window_in_samples, delta_t)
+}
+
