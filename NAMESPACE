@@ -3,6 +3,7 @@
 export("%>%")
 export(check_that_lengths_match)
 export(compute_velocity)
+export(compute_velocity_ek)
 export(compute_velocity_table)
 export(compute_velocity_via_ek)
 export(extract_saccades)
