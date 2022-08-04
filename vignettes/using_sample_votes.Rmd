@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+library(ggplot2)
+
 library(saccadr)
 ```
 
@@ -22,8 +24,6 @@ Function `extract_saccades()` has an option to return sample votes for each meth
 
 
 ```{r}
-library(ggplot2)
-
 data("single_trial")
 
 methods_to_use <- list("ek", "om", "nh")

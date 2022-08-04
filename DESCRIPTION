@@ -27,6 +27,7 @@ Depends:
     cluster,
     signal,
     tidyr
-Suggests: 
+Suggests:
     rmarkdown,
-    knitr
+    knitr,
+    ggplot2
