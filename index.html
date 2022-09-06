@@ -55,6 +55,9 @@
     <li>
       <a href="articles/using_custom_methods.html">Using Custom Methods</a>
     </li>
+    <li>
+      <a href="articles/using_sample_votes.html">Using Sample Votes</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -73,7 +76,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="saccadr">saccadr<a class="anchor" aria-label="anchor" href="#saccadr"></a>
 </h1></div>
-<p>An R package to extract (micro)saccades from gaze samples via an ensemble of methods approach. Because there is no single agreed upon definition of a saccade, there are numerous algorithms that extract saccades based on various heuristics. As they differ in the assumptions (about velocity, acceleration, etc.) that they make, the package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <a href="methods">Implemented Methods</a> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). When using this package, please cite both the package and individual methods.</p>
+<p>An R package to extract (micro)saccades from gaze samples via an ensemble of methods approach. Because there is no single agreed upon definition of a saccade, there are numerous algorithms that extract saccades based on various heuristics. As they differ in the assumptions (about velocity, acceleration, etc.) that they make, the package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <em>Implemented Methods</em> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). When using this package, please cite both the package and individual methods.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -85,26 +88,8 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>The main function is <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> that takes following arguments</p>
-<ul>
-<li>
-<code>x</code>, <code>y</code> vectors (for monocular data) or matrices / data.frames (for binocular data) with gaze samples in <strong>degrees of visual angle</strong>. The units are important as some methods use specific (physiologically plausible) velocity and acceleration thresholds.</li>
-<li>
-<code>sample_rate</code> in Hz. It is assumed to be common for the entire time series. If the time series contains chunks (trials) that were recorded using different acquisition rate (e.g., SR Research Eyelink allows to set different acquisition rate for each recording / trial), you would need to split the time series and analyze them separately.</li>
-<li>
-<code>trial</code> An optional vector with trial ID for each sample. If omitted, all samples are assumed to belong to a single trial. Velocity, acceleration, and saccades themselves are computed respecting trial borders.<br>
-</li>
-<li>
-<code>methods</code> A <em>list</em> (not a vector!) with names of package methods (strings, see <em>Implemented Methods</em> vignette) or <em>external functions</em> (see <em>Using Custom Methods</em> vignette) to label individual samples as belonging to a saccade. Package methods include Engbret &amp; Kliegl (2003) (<code>"ek"</code>), Otero-Millan et al. (<code>"om"</code>), Nyström and Holmqvist (2010) (<code>"nh"</code>).</li>
-<li>
-<code>options</code> A named list with options for a specific method, <em>Implemented Methods</em> vignette.</li>
-<li>
-<code>velocity_time_window</code> A time window in <em>milliseconds</em> that is used for computing velocity and acceleration.</li>
-<li>
-<code>binocular</code> Specifies how a binocular data is treated. Options are <code>"cyclopean"</code> (binocular data is converted to an average cyclopean image before saccades are extracted), <code>"monocular"</code> (saccades are extracted independently for each eye), <code>"merge"</code> (default, methods votes on monocular data for each eye but the votes are averaged across eyes before saccades extracted). <code>vote_threshold</code> Value between 0..1 defining a vote threshold for a saccade. By default, all but one method (<span class="math inline">$threshold = \frac{N-1}{N}$</span> where N is number of methods used) must agree for a sample to be considered for a saccade. Threshold of <span class="math inline">1</span> is used if a single method is used.</li>
-<li>
-<code>return_votes</code> An option to return votes for each sample and method instead of saccades.</li>
-</ul>
+<p>The main function is <code><a href="reference/extract_saccades.html">extract_saccades()</a></code>. Minimally, it takes gaze samples, sampling rate, list of methods to use for voting as well as options for individual methods, optional trial index, etc.</p>
+<p><code>{r eval = FALSE} data("single_trial") saccades &lt;- extract_saccades(single_trial$x, single_trial$y, sample_rate = 500)</code></p>
 </div>
 </div>
   </div>

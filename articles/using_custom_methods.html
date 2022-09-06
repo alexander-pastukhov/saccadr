@@ -55,6 +55,9 @@
     <li>
       <a href="../articles/using_custom_methods.html">Using Custom Methods</a>
     </li>
+    <li>
+      <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -193,8 +196,6 @@ below.</p>
 <span><span class="va">dx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">smoothed_x</span><span class="op">)</span> <span class="op">*</span> <span class="va">sample_rate</span></span>
 <span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">v</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="va">dx</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<p>However, note that <code><a href="https://rdrr.io/pkg/signal/man/filter.html" class="external-link">signal::filter()</a></code> cannot handle
-time-series with missing values (<code>NA</code>).</p>
 </div>
   </div>
 

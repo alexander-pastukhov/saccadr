@@ -4,5 +4,6 @@ pkgdown_sha: ~
 articles:
   methods: methods.html
   using_custom_methods: using_custom_methods.html
-last_built: 2022-07-30T13:21Z
+  using_sample_votes: using_sample_votes.html
+last_built: 2022-09-06T08:17Z
 

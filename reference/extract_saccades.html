@@ -47,6 +47,9 @@ per sample instead (return_votes = TRUE)."><!-- mathjax --><script src="https://
     <li>
       <a href="../articles/using_custom_methods.html">Using Custom Methods</a>
     </li>
+    <li>
+      <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
+    </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -204,7 +207,6 @@ when eyes are processed independently.</p></li>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compute_velocity_ek(x, trial, time_window_in_samples, delta_t):</span> object 'vel_df' not found</span>
 </code></pre></div>
     </div>
   </div>
