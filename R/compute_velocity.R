@@ -23,7 +23,7 @@ compute_velocity <- function(x, trial, sample_rate, velocity_time_window){
   compute_velocity_ek(x, trial, time_window_in_samples, delta_t)
 }
 
-#' Compute velocity for x, y, and its amplited 
+#' Compute velocity for x, y, and its amplitude
 #'
 #' @param x vector with x coordinates in \emph{degrees of visual angle}
 #' @param y vector with y coordinates in \emph{degrees of visual angle}
