@@ -2,9 +2,9 @@
 
 export("%>%")
 export(check_that_lengths_match)
-export(compute_velocity)
 export(compute_velocity_ek)
-export(compute_velocity_table)
+export(diff_ek)
+export(diff_nh)
 export(extract_saccades)
 export(filter_via_savitzky_golay)
 export(input_to_matrix)

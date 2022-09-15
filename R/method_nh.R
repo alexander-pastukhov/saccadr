@@ -14,7 +14,7 @@
 #' @param acc Acceleration \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
 #' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
-#' @param options Names list with method options. See \emph{details} for further information.
+#' @param options Named list with method options. See \emph{details} for  further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`
@@ -34,7 +34,6 @@ method_nh <- function(x,
                       options){
 
   # extracting options or using defaults
-  sg_filter_order <- option_or_default(options, "nh_sg_filter_order", 2)
   max_velocity <- option_or_default(options, "nh_max_velocity", 1000) 
   max_acceleration <- option_or_default(options, "nh_max_acceleration", 100000)
   initial_velocity_threshold <- option_or_default(options, "nh_initial_velocity_threshold", 100)
@@ -148,22 +147,3 @@ method_nh <- function(x,
 
 
 
-#' Smooths signal using Savitzky-Golay and then shifts the filtered signal back
-#'
-#' @param x vector of float
-#' @param sgOrder integer, order of the filter
-#'
-#' @return vector of float
-#' @importFrom signal sgolayfilt
-#' @export
-#' @keywords internal
-#'
-#' @examples
-#' filter_via_savitzky_golay(rnorm(1000), 2)
-filter_via_savitzky_golay <- function(x, sg_order){
-  sg_length <- sg_order + 3 - sg_order %% 2
-  x_shifted <- signal::sgolayfilt(x, p = sg_order, n = sg_length)
-  x_filtered <- rep(NA, length(x))
-  x_filtered[seq(1 + sg_length, length(x))] <- x_shifted[seq(1, length(x)-sg_length)]
-  x_filtered
-}

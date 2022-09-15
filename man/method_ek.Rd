@@ -19,7 +19,7 @@ method_ek(x, y, vel, acc, sample_rate, trial, options)
 
 \item{trial}{Trial id, so that trial borders are respected when computing velocity and saccades.}
 
-\item{options}{Names list with method options. See \emph{details} for further information.}
+\item{options}{Named list with method options. See \emph{details} for further information.}
 }
 \value{
 logical vector marking samples that belong to saccades

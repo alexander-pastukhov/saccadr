@@ -13,7 +13,7 @@
 #' @param acc Acceleration \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
 #' @param trial Trial id, so that trial borders are respected when computing velocity and saccades.
-#' @param options Names list with method options. See \emph{details} for further information.
+#' @param options Named list with method options. See \emph{details} for further information.
 #' @return logical vector marking samples that belong to saccades
 #' @export
 #' @importFrom magrittr `%>%`
