@@ -25,7 +25,8 @@
 #' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
 #' implement sample classification (see \emph{Using Custom Methods} vignette). Package methods include
 #' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
-#' @param options A named list with options for a specific method, see documentation on specific method for details.
+#' @param options A named list with options for saccade detection (see \code{\link{method_ek}}) and velocity computation. 
+#' See documentation on specific method for details.
 #' @param velocity_time_window Time window for computing velocity and acceleration in milliseconds.
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
@@ -77,7 +78,7 @@
 #' @export
 #' @importFrom dplyr mutate group_by filter select relocate rowwise ungroup bind_rows case_when
 #' @importFrom rlang .data
-#'
+#' @seealso [method_ek()], method_om, method_nk, diff_ek, diff_nh
 #' @examples
 #' data(single_trial)
 #' saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
@@ -86,8 +87,8 @@ extract_saccades <- function(x,
                              sample_rate,
                              trial = NULL,
                              methods = list("ek", "om", "nh"),
+                             velocity_function = saccadr::diff_ek,
                              options = NULL,
-                             velocity_time_window = 20,
                              binocular = "merge",
                              vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) - 1) / length(methods)) * 0.99),
                              minimal_duration_ms = 12,
@@ -155,10 +156,10 @@ extract_saccades <- function(x,
     sample_vote[[iEye]] <- matrix(0, nrow = nrow(x), ncol = length(methods))
     
     # compute velocity
-    vel[[iEye]] <- compute_velocity_table(x[, iEye], y[, iEye], trial, sample_rate, velocity_time_window)
+    vel[[iEye]] <- velocity_function(x[, iEye], y[, iEye], trial, sample_rate, options)
     
     # compute acceleration (for methods that require it)
-    acc[[iEye]] <- compute_velocity_table(vel[[iEye]][['x']], vel[[iEye]][['y']], trial, sample_rate, velocity_time_window)
+    acc[[iEye]] <- velocity_function(vel[[iEye]][['x']], vel[[iEye]][['y']], trial, sample_rate, options)
     
     for(iM in 1:length(methods)){
       # record votes for potential saccades

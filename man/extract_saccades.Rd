@@ -10,8 +10,8 @@ extract_saccades(
   sample_rate,
   trial = NULL,
   methods = list("ek", "om", "nh"),
+  velocity_function = saccadr::diff_ek,
   options = NULL,
-  velocity_time_window = 20,
   binocular = "merge",
   vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) -
     1)/length(methods)) * 0.99),
@@ -37,9 +37,8 @@ Velocity, acceleration, and saccades themselves are computed respecting trial bo
 implement sample classification (see \emph{Using Custom Methods} vignette). Package methods include
 Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).}
 
-\item{options}{A named list with options for a specific method, see documentation on specific method for details.}
-
-\item{velocity_time_window}{Time window for computing velocity and acceleration in milliseconds.}
+\item{options}{A named list with options for saccade detection (see \code{\link{method_ek}}) and velocity computation. 
+See documentation on specific method for details.}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
@@ -59,6 +58,8 @@ separated by a shorter interval of "not a saccade" votes, will be merged includi
 
 \item{return_votes}{Logical. Whether function should return extracted microsaccades (\code{FALSE}, default)
 or votes per sample (\code{TRUE}).}
+
+\item{velocity_time_window}{Time window for computing velocity and acceleration in milliseconds.}
 }
 \value{
 A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
@@ -114,4 +115,7 @@ when eyes are processed independently.}
 \examples{
 data(single_trial)
 saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
+}
+\seealso{
+[method_ek()], method_om, method_nk, diff_ek, diff_nh
 }
