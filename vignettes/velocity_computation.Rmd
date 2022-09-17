@@ -1,0 +1,49 @@
+---
+title: "Velocity computation"
+output: rmarkdown::html_vignette
+bibliography: methods.bib
+vignette: >
+  %\VignetteIndexEntry{Velocity computation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+library(saccadr)
+```
+
+Acceleration is computed the same way but from velocity samples.
+
+
+## Differentiation following @EngbertKliegl2003
+Horizontal and vertical velocity components are computed as
+$$v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}$$
+where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) that translates into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
+$$\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=$$
+$$\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=$$
+
+$$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
+$$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
+
+As noted in @Otero-Millan2014, this is equivalent to smoothing $x$ with a normalized Bartlett window ($n=6$ for five-sample velocity computation) and differentiating, see the code below.
+```{r eval=FALSE}
+# assuming vector `x` and a scalar `sample_rate`
+barlett_window <- signal::bartlett(6)
+smoothed_x <- signal::filter(barlett_window/sum(barlett_window), 1, x)
+dx <- diff(smoothed_x) * sample_rate
+v <- rep(0, length(x))
+v[1:(length(x)-3)] = dx[3:(length(x)-1)]
+```
+
+## Differentiation following @NystromHolmqvist2010
+
+## Implementing and using a custom differentiation function
+
+## References
