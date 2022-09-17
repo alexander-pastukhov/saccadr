@@ -9,7 +9,7 @@ extract_saccades(
   y,
   sample_rate,
   trial = NULL,
-  methods = list("ek", "om", "nh"),
+  methods = list(method_ek, method_om, method_nh),
   velocity_function = saccadr::diff_ek,
   options = NULL,
   binocular = "merge",
@@ -33,11 +33,19 @@ you would need to split the time series and analyze them separately.}
 \item{trial}{Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 Velocity, acceleration, and saccades themselves are computed respecting trial borders.}
 
-\item{methods}{A \emph{list} (not a vector!) with names of package methods (character) or external functions that
+\item{methods}{A list with saccade detection methods, can include external functions that
 implement sample classification (see \emph{Using Custom Methods} vignette). Package methods include
-Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).}
+Engbert & Kliegl (2003) (\code{method_ek}), Otero-Millan et al. (2014) (\code{method_om}), 
+Nyström and Holmqvist (2010) (\code{method_nh}). Defaults to the list of all internally implemented
+methods: \code{list(method_ek, method_om, method_nh)}.}
 
-\item{options}{A named list with options for saccade detection (see \code{\link{method_ek}}) and velocity computation. 
+\item{velocity_function}{A handle to a function to compute velocity and acceleration. Defaults to a method
+suggested by Engbert & Kliegl (2003) \code{\link{diff_ek}}. The package also implements the method proposed
+by Nyström and Holmqvist (2010) \code{\link{diff_nh}}. See vignette "Velocity computation" for details and
+information on how to implement a custom method.}
+
+\item{options}{A named list with options for saccade detection (see \code{\link{method_ek}}, \code{\link{method_om}},
+\code{\link{method_nh}}) and velocity (\code{\link{diff_ek}}, \code{\link{diff_nh}}) computation.
 See documentation on specific method for details.}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
@@ -58,11 +66,9 @@ separated by a shorter interval of "not a saccade" votes, will be merged includi
 
 \item{return_votes}{Logical. Whether function should return extracted microsaccades (\code{FALSE}, default)
 or votes per sample (\code{TRUE}).}
-
-\item{velocity_time_window}{Time window for computing velocity and acceleration in milliseconds.}
 }
 \value{
-A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
+A \code{data.frame} with saccade properties (see \strong{details}), if \code{return_votes = FALSE}.
 Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
 input, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
  columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
@@ -75,7 +81,7 @@ a given sample belongs to a saccade. Next, saccades are identified via a majorit
 Please note that units of the gaze samples must be in  \strong{degrees of visual angle}. The units are important
 as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds.
  
-By default, ensemble includes methods proposed by Engbret & Kliegl (2003) (\code{"ek"}),
+By default, ensemble includes methods proposed by Engbert & Kliegl (2003) (\code{"ek"}),
 Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"}), 
 see \emph{Implemented Methods} vignette. However, it can be extended
 via custom methods, see \emph{Using Custom Methods} vignette.
@@ -117,5 +123,5 @@ data(single_trial)
 saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
 }
 \seealso{
-[method_ek()], method_om, method_nk, diff_ek, diff_nh
+\code{\link{method_ek}}, \code{\link{method_om}}, \code{\link{method_nh}}, \code{\link{diff_ek}}, \code{\link{diff_nh}}
 }

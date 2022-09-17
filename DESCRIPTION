@@ -30,4 +30,6 @@ Depends:
 Suggests:
     rmarkdown,
     knitr,
-    ggplot2
+    ggplot2,
+    spelling
+Language: en-US
