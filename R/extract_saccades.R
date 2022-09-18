@@ -6,7 +6,7 @@
 #' Please note that units of the gaze samples must be in  \strong{degrees of visual angle}. The units are important
 #' as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds.
 #'  
-#' By default, ensemble includes methods proposed by Engbret & Kliegl (2003) (\code{"ek"}),
+#' By default, ensemble includes methods proposed by Engbert & Kliegl (2003) (\code{"ek"}),
 #' Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"}), 
 #' see \emph{Implemented Methods} vignette. However, it can be extended
 #' via custom methods, see \emph{Using Custom Methods} vignette.
@@ -22,11 +22,18 @@
 #' you would need to split the time series and analyze them separately.
 #' @param trial Optional vector with trial ID. If omitted, all samples are assumed to belong to a single trial.
 #' Velocity, acceleration, and saccades themselves are computed respecting trial borders. 
-#' @param methods A \emph{list} (not a vector!) with names of package methods (character) or external functions that
+#' @param methods A list with saccade detection methods, can include external functions that
 #' implement sample classification (see \emph{Using Custom Methods} vignette). Package methods include
-#' Engbret & Kliegl (2003) (\code{"ek"}), Otero-Millan et al. (\code{"om"}), Nyström and Holmqvist (2010) (\code{"nh"}).
-#' @param options A named list with options for a specific method, see documentation on specific method for details.
-#' @param velocity_time_window Time window for computing velocity and acceleration in milliseconds.
+#' Engbert & Kliegl (2003) (\code{method_ek}), Otero-Millan et al. (2014) (\code{method_om}), 
+#' Nyström and Holmqvist (2010) (\code{method_nh}). Defaults to the list of all internally implemented
+#' methods: \code{list(method_ek, method_om, method_nh)}.
+#' @param velocity_function A handle to a function to compute velocity and acceleration. Defaults to a method
+#' suggested by Engbert & Kliegl (2003) \code{\link{diff_ek}}. The package also implements the method proposed
+#' by Nyström and Holmqvist (2010) \code{\link{diff_nh}}. See vignette "Velocity computation" for details and
+#' information on how to implement a custom method.
+#' @param options A named list with options for saccade detection (see \code{\link{method_ek}}, \code{\link{method_om}},
+#' \code{\link{method_nh}}) and velocity (\code{\link{diff_ek}}, \code{\link{diff_nh}}) computation.
+#' See documentation on specific method for details.
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
 #' are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
@@ -42,7 +49,7 @@
 #' @param return_votes Logical. Whether function should return extracted microsaccades (\code{FALSE}, default)
 #' or votes per sample (\code{TRUE}). 
 #'
-#' @return A \code{data.frame} with saccade properties (see **details**), if \code{return_votes = FALSE}.
+#' @return A \code{data.frame} with saccade properties (see \strong{details}), if \code{return_votes = FALSE}.
 #' Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
 #' input, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
 #'  columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
@@ -77,7 +84,7 @@
 #' @export
 #' @importFrom dplyr mutate group_by filter select relocate rowwise ungroup bind_rows case_when
 #' @importFrom rlang .data
-#'
+#' @seealso \code{\link{method_ek}}, \code{\link{method_om}}, \code{\link{method_nh}}, \code{\link{diff_ek}}, \code{\link{diff_nh}}
 #' @examples
 #' data(single_trial)
 #' saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
@@ -85,9 +92,9 @@ extract_saccades <- function(x,
                              y,
                              sample_rate,
                              trial = NULL,
-                             methods = list("ek", "om", "nh"),
+                             methods = list(method_ek, method_om, method_nh),
+                             velocity_function = saccadr::diff_ek,
                              options = NULL,
-                             velocity_time_window = 20,
                              binocular = "merge",
                              vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) - 1) / length(methods)) * 0.99),
                              minimal_duration_ms = 12,
@@ -102,24 +109,11 @@ extract_saccades <- function(x,
   if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
   
-  # Checking methods
-  if (!is.list(methods)) stop("methods must be a list (not a vector) of method names or functions")
-  internal_methods <- list("ek" = saccadr::method_ek,
-                           "om" = saccadr::method_om,
-                           "nh" = saccadr::method_nh)
-  method_handle <- list()
+  # Checking methods (should all be functions)
+  if (length(methods) == 0) stop("Empty methods list")
   for(iM in 1:length(methods)){
-    # figuring out whether we are calling internal function (string with its name)
-    # or an externally supplied one
-    if (is.character(methods[[iM]]) & methods[[iM]] %in% names(internal_methods)) {
-      # internal method, references by name (string)
-      method_handle[[iM]] <- internal_methods[[methods[[iM]]]]
-    } else if (is.function(methods[[iM]])) {
-      # a function (probably externally defined method)
-      method_handle[[iM]] <- methods[[iM]]
-    } else {
-      # Neither? No idea what we are doing...
-      stop(sprintf("Method #%d is neither a valid name, nor a function.", iM))
+    if (!is.function(methods[[iM]])) {
+      stop(sprintf("Method #%d is not a function handle.", iM))
     }
   }
   
@@ -155,20 +149,20 @@ extract_saccades <- function(x,
     sample_vote[[iEye]] <- matrix(0, nrow = nrow(x), ncol = length(methods))
     
     # compute velocity
-    vel[[iEye]] <- compute_velocity_table(x[, iEye], y[, iEye], trial, sample_rate, velocity_time_window)
+    vel[[iEye]] <- velocity_function(x[, iEye], y[, iEye], trial, sample_rate, options)
     
     # compute acceleration (for methods that require it)
-    acc[[iEye]] <- compute_velocity_table(vel[[iEye]][['x']], vel[[iEye]][['y']], trial, sample_rate, velocity_time_window)
+    acc[[iEye]] <- velocity_function(vel[[iEye]][['x']], vel[[iEye]][['y']], trial, sample_rate, options)
     
     for(iM in 1:length(methods)){
       # record votes for potential saccades
-      sample_vote[[iEye]][, iM] <- method_handle[[iM]](x = x[, iEye],
-                                                       y = y[, iEye],
-                                                       vel=vel[[iEye]],
-                                                       acc[[iEye]],
-                                                       sample_rate = sample_rate,
-                                                       trial = trial,
-                                                       options = options)
+      sample_vote[[iEye]][, iM] <- methods[[iM]](x = x[, iEye],
+                                                 y = y[, iEye],
+                                                 vel=vel[[iEye]],
+                                                 acc[[iEye]],
+                                                 sample_rate = sample_rate,
+                                                 trial = trial,
+                                                 options = options)
       }
   }
   

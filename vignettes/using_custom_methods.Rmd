@@ -36,8 +36,7 @@ Arguments that are passed to the function (all vectors / tables have the same le
 * `vel` and `acc` are data frames with velocity and acceleration samples. Each table has columns `x` (horizontal component), `y` (vertical component), and `amp` (amplitude). See below for details on velocity computation.
 * `sample_rate` scalar value in Hz.
 * `trial` vector with trial index per sample.
-* `options` a named list with method specific options. See example below for how to use them. See also `option_or
-_default()` function.
+* `options` a named list with method specific options. See example below for how to use them. See also `option_or_default()` function.
 
 Your function must return a vector of the same length as `x` with votes ($1$ samples belongs to a saccade, $0$ not a saccade, you can also use logical values).
 
@@ -74,24 +73,4 @@ saccades <- saccadr::extract_saccades(x = single_trial$x,
                                       options = list("st_velocity_threshold" = 70))
 ```
 
-## Velocity computation
-Acceleration is computed the same way but from velocity samples.
 
-Horizontal and vertical velocity components are computed as
-$$v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}$$
-where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) that translates into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
-$$\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=$$
-$$\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=$$
-
-$$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
-$$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
-
-As noted in @Otero-Millan2014, this is equivalent to smoothing $x$ with a normalized Bartlett window ($n=6$ for five-sample velocity computation) and differentiating, see the code below.
-```{r eval=FALSE}
-# assuming vector `x` and a scalar `sample_rate`
-barlett_window <- signal::bartlett(6)
-smoothed_x <- signal::filter(barlett_window/sum(barlett_window), 1, x)
-dx <- diff(smoothed_x) * sample_rate
-v <- rep(0, length(x))
-v[1:(length(x)-3)] = dx[3:(length(x)-1)]
-```

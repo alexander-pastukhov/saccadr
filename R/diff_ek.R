@@ -4,7 +4,12 @@
 #' @param y vector with y coordinates in \emph{degrees of visual angle}
 #' @param trial vector with trial index
 #' @param sample_rate sample rate in Hz
-#' @param velocity_time_window Time window for velocity computation in \emph{milliseconds}
+#' @param options List with method specific options, see Details.
+#' 
+#' @details Method options, please refer to Engbert & Kliegl (2003) for details on parameters and the rationale for default values.
+#' \itemize{
+#' \item{\code{ek_velocity_time_window}} {Time window for velocity computation in milliseconds. Defaults to \code{20} ms.}
+#' }
 #'
 #' @return \code{data.frame} with columns \code{x}, \code{y}, and \code{amp}
 #' @export
@@ -12,7 +17,7 @@
 #'
 #' @examples
 #' diff_ek(rnorm(1000), rnorm(1000), rep(1, 1000), 250, list("ek_velocity_time_window" = 20))
-diff_ek <- function(x, y,  trial, sample_rate, velocity_time_window) {
+diff_ek <- function(x, y,  trial, sample_rate, options=NULL) {
   # extracting velocity time window from options
   velocity_time_window <- option_or_default(options, "ek_velocity_time_window", 20)
   
@@ -27,10 +32,8 @@ diff_ek <- function(x, y,  trial, sample_rate, velocity_time_window) {
   if (time_window_in_samples < 3) time_window_in_samples <- 3
 
   # actual differentiation
-  vel_df <- data.frame(
-    x = compute_velocity_ek(x, trial, time_window_in_samples, delta_t),
-    y = compute_velocity_ek(y, trial, time_window_in_samples, delta_t),
-  )
+  vel_df <- data.frame(x = compute_velocity_ek(x, trial, time_window_in_samples, delta_t),
+                       y = compute_velocity_ek(y, trial, time_window_in_samples, delta_t))
   vel_df[['amp']] <- sqrt(vel_df[['x']]^2 + vel_df[['y']]^2)
   
   vel_df

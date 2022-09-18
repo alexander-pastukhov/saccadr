@@ -67,20 +67,17 @@ Parameters:
 
 ## @NystromHolmqvist2010
 
-
 The algorithm:
 
-1. Compute velocity and acceleration from adjacent samples (it does not use pre-computed velocity and acceleration) and filter it using Savitzky-Golay filter (filter order defaults to $2$).
-2. Identify physiologically implausible velocity and acceleration peaks (defaults to $1000 \deg/s$ and $100000 \deg/s^2$).
-3. Identify noise onset/offset as samples around the implausible velocity/acceleration that a above median velocity. Exluce these samples from analysis.
-4. Identify velocity threshold $PT = mean(V_{subthreshold}) + 6 \cdot std(V_{subthreshold})$ via an iterative method starting at arbitrary $PT$ value (defaults to $100 \deg/s$). Stop when threshold change is below $1 \deg/s$.
-5. Identify saccades as periods with peaks peaks above threshold $PT$ and adjacent samples that are above $PT_{onset/offset} = mean(V_{subthreshold}) + 3 \cdot std(V_{subthreshold})$.
+1. Identify physiologically implausible velocity and acceleration peaks (defaults to $1000 \deg/s$ and $100000 \deg/s^2$).
+2. Identify noise onset/offset as samples around the implausible velocity/acceleration that a above median velocity. Exluce these samples from analysis.
+3. Identify velocity threshold $PT = mean(V_{subthreshold}) + 6 \cdot std(V_{subthreshold})$ via an iterative method starting at arbitrary $PT$ value (defaults to $100 \deg/s$). Stop when threshold change is below $1 \deg/s$.
+4. Identify saccades as periods with peaks peaks above threshold $PT$ and adjacent samples that are above $PT_{onset/offset} = mean(V_{subthreshold}) + 3 \cdot std(V_{subthreshold})$.
 
 For method details and rationale for default parameter values refer to @NystromHolmqvist2010.
 
 Parameters:
 
-* `nh_sg_filter_order` Order of Savitzky-Golay filter. Defaults to `2`.
 * `nh_max_velocity` Maximal physiologically plausible velocity in °/s. Defaults to `1000`.
 * `nh_max_acceleration` Maximal physiologically plausible acceleration in °/s². Defaults to `100000`.
 * `nh_initial_velocity_threshold` Initial velocity threshold in °/s. Defaults to `100`.

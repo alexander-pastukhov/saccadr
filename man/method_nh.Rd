@@ -9,7 +9,7 @@ method_nh(x, y, vel, acc, sample_rate, trial, options)
 \arguments{
 \item{x}{Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.}
 
-\item{y}{Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.}
+\item{y}{Gaze y coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.}
 
 \item{vel}{Velocity \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.}
 

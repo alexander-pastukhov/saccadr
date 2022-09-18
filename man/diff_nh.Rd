@@ -4,7 +4,7 @@
 \alias{diff_nh}
 \title{Differentiate x and y and compute change amplitude via an algorithm proposed by Nyström and Holmqvist (2010) \doi{10.3758/BRM.42.1.188}}
 \usage{
-diff_nh(x, y, trial, sample_rate, options)
+diff_nh(x, y, trial, sample_rate, options = NULL)
 }
 \arguments{
 \item{x}{vector with x coordinates in \emph{degrees of visual angle}}
@@ -15,7 +15,7 @@ diff_nh(x, y, trial, sample_rate, options)
 
 \item{sample_rate}{sample rate in Hz}
 
-\item{options}{Time window for velocity computation in \emph{milliseconds}}
+\item{options}{List with method specific options, see Details.}
 }
 \value{
 \code{data.frame} with columns \code{x}, \code{y}, and \code{amp}

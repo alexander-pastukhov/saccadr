@@ -9,7 +9,7 @@
 #' }
 #'
 #' @param x Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
-#' @param y Gaze x coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
+#' @param y Gaze y coordinate, _arbitrary units_ as threshold velocity is computed in units of standard deviation.
 #' @param vel Velocity \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param acc Acceleration \code{data.frame} with columns \code{x}, \code{y}, \code{amp}.
 #' @param sample_rate Sample rate in Hz.
@@ -41,29 +41,16 @@ method_nh <- function(x,
   # computing frame time step 
   delta_t_s <- 1 / sample_rate
   
-  # --- compute and filter velocity and acceleration
-  samples <- data.frame(trial = trial,
-                        x = x,
-                        y = y) %>%
-    # adding overall index
-    dplyr::mutate(irow = 1:n()) %>%
-    
-    # compute velocity and acceleration for each trial
-    dplyr::group_by(.data$trial) %>%
-    dplyr::mutate(velx = (.data$x - lag(x)) / delta_t_s,
-                  vely = (.data$y - lag(y)) / delta_t_s,
-                  vel = sqrt(.data$velx^2 + .data$vely^2),
-                  accx = (.data$velx - lag(.data$velx)) / delta_t_s,
-                  accy = (.data$vely - lag(.data$vely)) / delta_t_s,
-                  acc = sqrt(.data$accx^2 + .data$accy^2)) %>%
-    
-    # filter velocity
-    dplyr::mutate(vel = filter_via_savitzky_golay(.data$vel, sg_filter_order),
-                  acc = filter_via_savitzky_golay(.data$acc, sg_filter_order)) %>%
-    
+  # --- combine compute and filter velocity and acceleration
+  samples <- 
+    data.frame(trial = trial,
+               vel = vel[['amp']],
+               acc = acc[['amp']]) %>%
+
     # nest, so we can process each trial separately
+    dplyr::group_by(.data$trial) %>%
     tidyr::nest()
-  
+
   # --- identify physiologically unrealistic velocity and acceleration
   for(itrial in 1:nrow(samples)){
     # identifying clearly unrealistic peaks
