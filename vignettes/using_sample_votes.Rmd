@@ -21,7 +21,7 @@ library(saccadr)
 
 Function `extract_saccades()` has an option to return sample votes for each method via `return_votes = TRUE` parameter. Here is an example of using them for internally implemented methods.
 
-```{r}
+```{r  out.width="100%", fig.dim = c(8, 4)}
 data("single_trial")
 
 methods_to_use <- list("Engbert & Kliegl (2003)" = method_ek,
@@ -49,8 +49,9 @@ ggplot(do.call("rbind", single_trial_with_votes),
   facet_grid(. ~ Method) +
   theme(legend.position = "top")
 ```
+
 Same data but using @NystromHolmqvist2010 to compute velocity and acceleration
-```{r}
+```{r  out.width="100%", fig.dim = c(8, 4)}
 votes <- extract_saccades(x = single_trial$x,
                           y = single_trial$y,
                           sample_rate = 500,
