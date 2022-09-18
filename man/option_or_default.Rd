@@ -20,6 +20,6 @@ Value from a list or default value
 Extract value for a named list or use default if key is missing
 }
 \examples{
-option_or_default(list("A"), "A", 20)
-option_or_default(list("A"), "B", 20)
+option_or_default(list("A" = 25), "A", 20)
+option_or_default(list("A" = 25), "B", 20)
 }

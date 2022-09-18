@@ -8,8 +8,8 @@
 #' @export
 #'
 #' @examples
-#' option_or_default(list("A"), "A", 20)
-#' option_or_default(list("A"), "B", 20)
+#' option_or_default(list("A" = 25), "A", 20)
+#' option_or_default(list("A" = 25), "B", 20)
 option_or_default <- function(options, key, default){
   if (is.null(options)) return(default)
   ifelse(key %in% names(options), options[[key]], default)
