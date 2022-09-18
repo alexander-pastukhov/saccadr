@@ -118,7 +118,10 @@
 #' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = method_om)
 #' 
 #' # Using two methods
-#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = list(method_ek, method_om))
+#' saccades <- extract_saccades(single_trial$x,
+#'                              single_trial$y,
+#'                              500,
+#'                              methods = list(method_ek, method_om))
 #' 
 #' #  Alternative velocity computation method
 #' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, velocity_function = diff_nh)
