@@ -155,6 +155,14 @@ extract_saccades <- function(x,
   if (any(dim(x) != dim(y))) stop("Dimensions for x and y do not match.")
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
   
+  # Checking sample rate (should be strictly positive)
+  if (!is.numeric(sample_rate) |
+      (length(sample_rate) != 1) |
+      (any(sample_rate <= 0))) {
+    stop("Need a numeric strictly positive value for sample_rate")
+  }
+
+  
   # Checking methods (should all be functions)
   if (is.function(methods)) {
     # a single function, let's wrap it into a list
