@@ -36,12 +36,11 @@
 #' See documentation on specific method for details.
 #' @param binocular Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 #' converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
-#' are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
-#' independently but saccades from different eyes that temporally overlap are averaged into a binocular
-#' saccade).
-#' @param vote_threshold Value between 0..1 defining a vote threshold for a saccade.
-#' By default, all but one method (\eqn{threshold = \frac{N-1}{N}}
-#' where N is number of methods used) must agree for a sample to be considered for a saccade.
+#' are extracted independently for each eye), \code{"merge"} (default, sample votes are obtained from both eyes and
+#' for all methods and then averaged. This way only binocular saccades, i.e., eye movements with a sufficient temporal
+#'  overlap between eyes, are detected.).
+#' @param vote_threshold Value between 1 and N (where N is number of used methods) defining a vote threshold for a
+#' saccade. By default, all but one method \eqn{threshold = N-1} must agree for a sample to be considered for a saccade.
 #' Threshold of 1 is applied if a single method is used.
 #' @param minimal_duration_ms Minimal duration of a saccade in milliseconds. Shorter candidate saccades are discarded,
 #' @param minimal_separation_ms Minimal time separation between saccades in milliseconds. Saccades that are
@@ -73,7 +72,7 @@
 #' \item{\code{AmplitudeX}} {Horizontal displacement measured from the \emph{leftmost} to the \emph{rightmost} sample.}
 #' \item{\code{AmplitudeY}} {Vertical displacement measured from the \emph{lowest} to the \emph{uppermost} sample.}
 #' \item{\code{Amplitude}} {Displacement magnitude measured from the most extreme samples.}
-#' \item{\code{Amplitude}} {Displacement direction measured from the most extreme samples.}
+#' \item{\code{AmplitudePhi}} {Displacement direction measured from the most extreme samples.}
 #' \item{\code{VelocityPeak}} {Peak velocity.}
 #' \item{\code{VelocityAvg}} {Average velocity.}
 #' \item{\code{AccelerationPeak}} {Peak acceleration.}
@@ -86,8 +85,52 @@
 #' @importFrom rlang .data
 #' @seealso \code{\link{method_ek}}, \code{\link{method_om}}, \code{\link{method_nh}}, \code{\link{diff_ek}}, \code{\link{diff_nh}}
 #' @examples
+#' # Single trial
 #' data(single_trial)
 #' saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
+#' 
+#' # Multiple trials
+#' data(monocular_ten_trials)
+#' saccades <- extract_saccades(monocular_ten_trials$x,
+#'                              monocular_ten_trials$y, 
+#'                              500,
+#'                              trial = monocular_ten_trials$trial)
+#'  
+#'  # binocular saccades                            
+#'  data("single_trial_binocular")
+#'  saccades_b <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+#'                                          single_trial_binocular[, c('yL', 'yR')],
+#'                                          sample_rate = 1000)
+#'                                          
+#'  # cyclopean saccades from binocular data
+#' saccades_c <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+#'                                         single_trial_binocular[, c('yL', 'yR')],
+#'                                         sample_rate = 1000,
+#'                                         binocular = "cyclopean")
+#'
+#'  # monocular saccades from binocular data
+#' saccades_m <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+#'                                        single_trial_binocular[, c('yL', 'yR')],
+#'                                        sample_rate = 1000,
+#'                                        binocular = "monocular")
+#'                              
+#' # Using a single method
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = method_om)
+#' 
+#' # Using two methods
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = list(method_ek, method_om))
+#' 
+#' #  Alternative velocity computation method
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, velocity_function = diff_nh)
+#' 
+#' # A strict unanimous decision threshold
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, vote_threshold = 3)
+#' 
+#' # A slacker criterion that at least one of the three methods must label sample as a saccade
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, vote_threshold = 1)
+#' 
+#' # Only longish saccades are extracted
+#' saccades <- extract_saccades(single_trial$x, single_trial$y, 500, minimal_duration_ms = 20)
 extract_saccades <- function(x,
                              y,
                              sample_rate,
@@ -96,7 +139,7 @@ extract_saccades <- function(x,
                              velocity_function = saccadr::diff_ek,
                              options = NULL,
                              binocular = "merge",
-                             vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) - 1) / length(methods)) * 0.99),
+                             vote_threshold = ifelse(length(methods) == 1, 1, (length(methods) - 1)),
                              minimal_duration_ms = 12,
                              minimal_separation_ms = 12,
                              return_votes = FALSE){
@@ -110,13 +153,22 @@ extract_saccades <- function(x,
   if (ncol(x) != 1 & ncol(x) != 2) stop("x and y must be vectors or two-column matrices.")
   
   # Checking methods (should all be functions)
+  if (is.function(methods)) {
+    # a single function, let's wrap it into a list
+    methods <- list(methods)
+  }
+  if (!(is.list(methods))) stop("methods parameter must be a list of methods or a single function.")
   if (length(methods) == 0) stop("Empty methods list")
   for(iM in 1:length(methods)){
     if (!is.function(methods[[iM]])) {
-      stop(sprintf("Method #%d is not a function handle.", iM))
+      stop(sprintf("Method #%d is not a function.", iM))
     }
   }
   
+  # Checking voting threshold
+  if (!(vote_threshold) %in% seq(1, length(methods))) stop(sprintf("vote_threshold must be an integer between 1 and %d", length(methods)))
+  vote_threshold <- 0.99 * vote_threshold / length(methods) # 0.99 to avoid potential problems when comparing floats
+
   # Checking trial information
   if (is.null(trial)) {
     # All samples belong to the same trial.
@@ -129,9 +181,10 @@ extract_saccades <- function(x,
   }
   
   # Binocular data, checks and optional pre-processing.
+  original_x_ncol <- ncol(x)
   if ((ncol(x) == 2)) {
     # Checking validity of a binocular option.
-    if (!(binocular %in% c("cyclopean", "independent", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "monocular", or "merge".')
+    if (!(binocular %in% c("cyclopean", "monocular", "merge"))) stop ('Unknown binocular option. Must be "cyclopean", "monocular", or "merge".')
     
     # Special case, cyclopean data via averaging.
     if (binocular == "cyclopean") {
@@ -183,11 +236,10 @@ extract_saccades <- function(x,
   
   # if binocular processing was selected, average over normalized votes
   # also average location, velocity, and acceleration 
-  original_x_ncol <- ncol(x)
   if ( ncol(x) == 2 & binocular == "merge") {
-    normalized_votes <- rowMeans(normalized_votes)
-    x <- rowMeans(x)
-    y <- rowMeans(y)
+    normalized_votes <- matrix(rowMeans(normalized_votes), ncol = 1)
+    x <- matrix(rowMeans(x), ncol = 1)
+    y <- matrix(rowMeans(y), ncol = 1)
     vel <- list(data.frame('x' = (vel[[1]][['x']] + vel[[2]][['x']]) / 2.0,
                            'y' = (vel[[1]][['y']] + vel[[2]][['y']]) / 2.0,
                            'amp' = (vel[[1]][['amp']] + vel[[2]][['amp']]) / 2.0))
@@ -211,7 +263,7 @@ extract_saccades <- function(x,
   # labeling potential saccade samples: either super-threshold or brief sub-threshold periods
   eye_saccades <- list()
   for(iEye in 1:ncol(x)){
-    thresholded_periods <- rle(normalized_votes[, iEye] >= vote_threshold)
+    thresholded_periods <- rle(normalized_votes[, iEye] >= (vote_threshold *  0.99)) # 0.99 just to make sure we don't get funny results due to float representation
     thresholded_periods$values <- (thresholded_periods$values == TRUE) |  # 1. super-threshold
                                   (thresholded_periods$values == FALSE &  # 2. or sub-threshold
                                    lead(thresholded_periods$values) == TRUE & # but surrounded by super-threshold

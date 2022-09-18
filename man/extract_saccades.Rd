@@ -13,8 +13,7 @@ extract_saccades(
   velocity_function = saccadr::diff_ek,
   options = NULL,
   binocular = "merge",
-  vote_threshold = ifelse(length(methods) == 1, 1, ((length(methods) -
-    1)/length(methods)) * 0.99),
+  vote_threshold = ifelse(length(methods) == 1, 1, (length(methods) - 1)),
   minimal_duration_ms = 12,
   minimal_separation_ms = 12,
   return_votes = FALSE
@@ -50,13 +49,12 @@ See documentation on specific method for details.}
 
 \item{binocular}{Specifies how a binocular data is treated. Options are \code{"cyclopean"} (binocular data is
 converted to an average cyclopean image before saccades are extracted), \code{"monocular"} (saccades
-are extracted independently for each eye), \code{"merge"} (default, saccades are extracted for each eye
-independently but saccades from different eyes that temporally overlap are averaged into a binocular
-saccade).}
+are extracted independently for each eye), \code{"merge"} (default, sample votes are obtained from both eyes and
+for all methods and then averaged. This way only binocular saccades, i.e., eye movements with a sufficient temporal
+ overlap between eyes, are detected.).}
 
-\item{vote_threshold}{Value between 0..1 defining a vote threshold for a saccade.
-By default, all but one method (\eqn{threshold = \frac{N-1}{N}}
-where N is number of methods used) must agree for a sample to be considered for a saccade.
+\item{vote_threshold}{Value between 1 and N (where N is number of used methods) defining a vote threshold for a
+saccade. By default, all but one method \eqn{threshold = N-1} must agree for a sample to be considered for a saccade.
 Threshold of 1 is applied if a single method is used.}
 
 \item{minimal_duration_ms}{Minimal duration of a saccade in milliseconds. Shorter candidate saccades are discarded,}
@@ -109,7 +107,7 @@ when eyes are processed independently.}
 \item{\code{AmplitudeX}} {Horizontal displacement measured from the \emph{leftmost} to the \emph{rightmost} sample.}
 \item{\code{AmplitudeY}} {Vertical displacement measured from the \emph{lowest} to the \emph{uppermost} sample.}
 \item{\code{Amplitude}} {Displacement magnitude measured from the most extreme samples.}
-\item{\code{Amplitude}} {Displacement direction measured from the most extreme samples.}
+\item{\code{AmplitudePhi}} {Displacement direction measured from the most extreme samples.}
 \item{\code{VelocityPeak}} {Peak velocity.}
 \item{\code{VelocityAvg}} {Average velocity.}
 \item{\code{AccelerationPeak}} {Peak acceleration.}
@@ -119,8 +117,52 @@ when eyes are processed independently.}
 }
 }
 \examples{
+# Single trial
 data(single_trial)
 saccades <- extract_saccades(single_trial$x, single_trial$y, 500)
+
+# Multiple trials
+data(monocular_ten_trials)
+saccades <- extract_saccades(monocular_ten_trials$x,
+                             monocular_ten_trials$y, 
+                             500,
+                             trial = monocular_ten_trials$trial)
+ 
+ # binocular saccades                            
+ data("single_trial_binocular")
+ saccades_b <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+                                         single_trial_binocular[, c('yL', 'yR')],
+                                         sample_rate = 1000)
+                                         
+ # cyclopean saccades from binocular data
+saccades_c <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+                                        single_trial_binocular[, c('yL', 'yR')],
+                                        sample_rate = 1000,
+                                        binocular = "cyclopean")
+
+ # monocular saccades from binocular data
+saccades_m <- saccadr::extract_saccades(single_trial_binocular[, c('xL', 'xR')],
+                                       single_trial_binocular[, c('yL', 'yR')],
+                                       sample_rate = 1000,
+                                       binocular = "monocular")
+                             
+# Using a single method
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = method_om)
+
+# Using two methods
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = list(method_ek, method_om))
+
+#  Alternative velocity computation method
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, velocity_function = diff_nh)
+
+# A strict unanimous decision threshold
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, vote_threshold = 3)
+
+# A slacker criterion that at least one of the three methods must label sample as a saccade
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, vote_threshold = 1)
+
+# Only longish saccades are extracted
+saccades <- extract_saccades(single_trial$x, single_trial$y, 500, minimal_duration_ms = 20)
 }
 \seealso{
 \code{\link{method_ek}}, \code{\link{method_om}}, \code{\link{method_nh}}, \code{\link{diff_ek}}, \code{\link{diff_nh}}
