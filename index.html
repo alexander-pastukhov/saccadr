@@ -87,7 +87,7 @@
 </h1></div>
 <p><strong>saccadr</strong> is a modular and extendable R package to extract (micro)saccades from gaze samples via an ensemble of methods approach.</p>
 <p>Although there is an agreement about a general definition of a <a href="https://en.wikipedia.org/wiki/Saccade" class="external-link">saccade</a>, the more specific details are harder to agree upon. Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity, acceleration, etc. The package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <em>Implemented Methods</em> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). It also uses a modular approach to compute velocity and acceleration from noisy samples (see <em>Velocity computation</em> vignette). Finally, you can obtain methods votes per gaze sample instead of saccades (see <em>Using sample votes</em> vignette).</p>
-<p>The <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration (<code>minimal_duration_ms</code> parameter) and minimal time between the saccades (<code>minimal_separation_ms</code>). For binocular data, samples can be averaged <em>before</em> velocity computation, votes can be merged so that methods returns binocular saccades, or saccades are extracted for each eye separately.</p>
+<p>The <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration and minimal time between the saccades. For binocular data, samples can be averaged <em>before</em> velocity computation, votes can be merged so that methods returns binocular saccades, or saccades are extracted for each eye separately.</p>
 <p>Currently, the library implements saccade detection using on the following saccade detection methods. When using this package, please cite both the package and individual methods.</p>
 <ul>
 <li>
@@ -97,7 +97,7 @@
 <code>method_om</code> : Otero-Millan, J., Castro, J. L. A., Macknik, S. L., &amp; Martinez-Conde, S. (2014). Unsupervised clustering method to detect microsaccades. Journal of Vision, 14(2), 18–18. <a href="https://doi.org/10.1167/14.2.18" class="external-link uri">https://doi.org/10.1167/14.2.18</a>
 </li>
 <li>
-<code>method_nh</code> : Nyström, M., &amp; Holmqvist, K. (2010). An adaptive algorithm for fixation, saccade, and glissade detection in eyetracking data. Behavior Research Methods, 42(1), 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link uri">https://doi.org/10.3758/BRM.42.1.188</a>
+<code>method_nh</code> : Nyström, M., &amp; Holmqvist, K. (2010). An adaptive algorithm for fixation, saccade, and glissade detection in eye tracking data. Behavior Research Methods, 42(1), 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link uri">https://doi.org/10.3758/BRM.42.1.188</a>
 </li>
 </ul>
 <div class="section level2">
