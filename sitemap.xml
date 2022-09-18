@@ -16,6 +16,9 @@
     <loc>/articles/using_sample_votes.html</loc>
   </url>
   <url>
+    <loc>/articles/velocity_computation.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -25,13 +28,13 @@
     <loc>/reference/check_that_lengths_match.html</loc>
   </url>
   <url>
-    <loc>/reference/compute_velocity.html</loc>
-  </url>
-  <url>
     <loc>/reference/compute_velocity_ek.html</loc>
   </url>
   <url>
-    <loc>/reference/compute_velocity_table.html</loc>
+    <loc>/reference/diff_ek.html</loc>
+  </url>
+  <url>
+    <loc>/reference/diff_nh.html</loc>
   </url>
   <url>
     <loc>/reference/extract_saccades.html</loc>
@@ -55,6 +58,9 @@
     <loc>/reference/method_om.html</loc>
   </url>
   <url>
+    <loc>/reference/monocular_ten_trials.html</loc>
+  </url>
+  <url>
     <loc>/reference/option_or_default.html</loc>
   </url>
   <url>
@@ -68,5 +74,8 @@
   </url>
   <url>
     <loc>/reference/single_trial.html</loc>
+  </url>
+  <url>
+    <loc>/reference/single_trial_binocular.html</loc>
   </url>
 </urlset>

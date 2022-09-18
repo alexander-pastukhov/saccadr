@@ -40,6 +40,9 @@
     <li>
       <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="../articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -58,17 +61,17 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="compute_velocity.html">compute_velocity()</a></code> </p>
-        </td>
-        <td><p>Compute velocity based on Engbert &amp; Kliegl (2003)</p></td>
-      </tr><tr><td>
           <p><code><a href="compute_velocity_ek.html">compute_velocity_ek()</a></code> </p>
         </td>
         <td><p>Compute velocity via Engbert &amp; Kliegl (2003) algorithm.</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_velocity_table.html">compute_velocity_table()</a></code> </p>
+          <p><code><a href="diff_ek.html">diff_ek()</a></code> </p>
         </td>
-        <td><p>Compute velocity for x, y, and its amplited</p></td>
+        <td><p>Differentiate x and y and compute change amplitude via an algorithm proposed by Engbert &amp; Kliegl (2003)</p></td>
+      </tr><tr><td>
+          <p><code><a href="diff_nh.html">diff_nh()</a></code> </p>
+        </td>
+        <td><p>Differentiate x and y and compute change amplitude via an algorithm proposed by Nyström and Holmqvist (2010) <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link">doi:10.3758/BRM.42.1.188</a></p></td>
       </tr><tr><td>
           <p><code><a href="extract_saccades.html">extract_saccades()</a></code> </p>
         </td>
@@ -87,6 +90,10 @@
         </td>
         <td><p>Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) <a href="https://doi.org/10.1167/14.2.18." class="external-link">doi:10.1167/14.2.18.</a></p></td>
       </tr><tr><td>
+          <p><code><a href="monocular_ten_trials.html">monocular_ten_trials</a></code> </p>
+        </td>
+        <td><p>A monocular multi-trial recording</p></td>
+      </tr><tr><td>
           <p><code><a href="option_or_default.html">option_or_default()</a></code> </p>
         </td>
         <td><p>Extract value for a named list or use default if key is missing</p></td>
@@ -101,7 +108,11 @@
       </tr><tr><td>
           <p><code><a href="single_trial.html">single_trial</a></code> </p>
         </td>
-        <td><p>A single trial samples recorded at 500 Hz.</p></td>
+        <td><p>A single trial monocular samples recorded at 500 Hz.</p></td>
+      </tr><tr><td>
+          <p><code><a href="single_trial_binocular.html">single_trial_binocular</a></code> </p>
+        </td>
+        <td><p>A single trial binocular recording.</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

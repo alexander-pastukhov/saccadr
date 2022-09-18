@@ -58,6 +58,9 @@
     <li>
       <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="../articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -180,9 +183,6 @@ retained rotated components. Defaults to <span class="math inline">\(0.05\)</spa
 </h2>
 <p>The algorithm:</p>
 <ol style="list-style-type: decimal">
-<li>Compute velocity and acceleration from adjacent samples (it does not
-use pre-computed velocity and acceleration) and filter it using
-Savitzky-Golay filter (filter order defaults to <span class="math inline">\(2\)</span>).</li>
 <li>Identify physiologically implausible velocity and acceleration peaks
 (defaults to <span class="math inline">\(1000 \deg/s\)</span> and <span class="math inline">\(100000 \deg/s^2\)</span>).</li>
 <li>Identify noise onset/offset as samples around the implausible
@@ -200,9 +200,6 @@ is below <span class="math inline">\(1 \deg/s\)</span>.</li>
 to <span class="citation">Nyström and Holmqvist (2010)</span>.</p>
 <p>Parameters:</p>
 <ul>
-<li>
-<code>nh_sg_filter_order</code> Order of Savitzky-Golay filter.
-Defaults to <code>2</code>.</li>
 <li>
 <code>nh_max_velocity</code> Maximal physiologically plausible
 velocity in °/s. Defaults to <code>1000</code>.</li>

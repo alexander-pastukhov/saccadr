@@ -5,14 +5,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Extract (Micro)Saccades From Gaze Samples • saccadr</title>
+<title>A Modular And Extendable R Package To Extract (Micro)Saccades From Gaze Samples Via An Ensemble Of Methods Approach • saccadr</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Extract (Micro)Saccades From Gaze Samples">
-<meta property="og:description" content="Extract (micro)saccades for gaze samples via one of the implemented methods.">
+<script src="pkgdown.js"></script><meta property="og:title" content="A Modular And Extendable R Package To Extract (Micro)Saccades From Gaze Samples Via An Ensemble Of Methods Approach">
+<meta property="og:description" content="Although there is an agreement about a general definition of a saccade, the more specific details are harder to agree upon.
+  Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity,
+  acceleration, etc. The package uses three methods (Engbert and Kliegl (2003) &lt;doi:10.1016/S0042-6989(03)00084-1&gt;, 
+  Otero-Millan et al. (2014)&lt;doi:{10.1167/14.2.18&gt;, and Nyström and Holmqvist (2010) &lt;doi:10.3758/BRM.42.1.188&gt;)
+  to label individual samples and then applies a majority vote approach to identify saccades.
+  The package includes three methods but can be extended via custom functions. It also uses a modular approach to compute velocity and
+  acceleration from noisy samples. Finally, you can obtain methods votes per gaze sample instead of saccades.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -58,6 +64,9 @@
     <li>
       <a href="articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -76,7 +85,21 @@
 <div class="section level1">
 <div class="page-header"><h1 id="saccadr">saccadr<a class="anchor" aria-label="anchor" href="#saccadr"></a>
 </h1></div>
-<p>An R package to extract (micro)saccades from gaze samples via an ensemble of methods approach. Because there is no single agreed upon definition of a saccade, there are numerous algorithms that extract saccades based on various heuristics. As they differ in the assumptions (about velocity, acceleration, etc.) that they make, the package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <em>Implemented Methods</em> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). When using this package, please cite both the package and individual methods.</p>
+<p><strong>saccadr</strong> is a modular and extendable R package to extract (micro)saccades from gaze samples via an ensemble of methods approach.</p>
+<p>Although there is an agreement about a general definition of a <a href="https://en.wikipedia.org/wiki/Saccade" class="external-link">saccade</a>, the more specific details are harder to agree upon. Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity, acceleration, etc. The package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <em>Implemented Methods</em> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). It also uses a modular approach to compute velocity and acceleration from noisy samples (see <em>Velocity computation</em> vignette). Finally, you can obtain methods votes per gaze sample instead of saccades (see <em>Using sample votes</em> vignette).</p>
+<p>The <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration (<code>minimal_duration_ms</code> parameter) and minimal time between the saccades (<code>minimal_separation_ms</code>). For binocular data, samples can be averaged <em>before</em> velocity computation, votes can be merged so that methods returns binocular saccades, or saccades are extracted for each eye separately.</p>
+<p>Currently, the library implements saccade detection using on the following saccade detection methods. When using this package, please cite both the package and individual methods.</p>
+<ul>
+<li>
+<code>method_ek</code> : Engbert, R., &amp; Kliegl, R. (2003). Microsaccades uncover the orientation of covert attention. Vision Research, 43(9), 1035–1045. <a href="https://doi.org/10.1016/S0042-6989(03)00084-1" class="external-link uri">https://doi.org/10.1016/S0042-6989(03)00084-1</a>
+</li>
+<li>
+<code>method_om</code> : Otero-Millan, J., Castro, J. L. A., Macknik, S. L., &amp; Martinez-Conde, S. (2014). Unsupervised clustering method to detect microsaccades. Journal of Vision, 14(2), 18–18. <a href="https://doi.org/10.1167/14.2.18" class="external-link uri">https://doi.org/10.1167/14.2.18</a>
+</li>
+<li>
+<code>method_nh</code> : Nyström, M., &amp; Holmqvist, K. (2010). An adaptive algorithm for fixation, saccade, and glissade detection in eyetracking data. Behavior Research Methods, 42(1), 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link uri">https://doi.org/10.3758/BRM.42.1.188</a>
+</li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -88,8 +111,149 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>The main function is <code><a href="reference/extract_saccades.html">extract_saccades()</a></code>. Minimally, it takes gaze samples, sampling rate, list of methods to use for voting as well as options for individual methods, optional trial index, etc.</p>
-<p><code>{r eval = FALSE} data("single_trial") saccades &lt;- extract_saccades(single_trial$x, single_trial$y, sample_rate = 500)</code></p>
+<p>The main function is <code><a href="reference/extract_saccades.html">extract_saccades()</a></code>. Minimally, it takes x and y gaze samples, and sampling rate returning a table with extracted saccades. Note that the function expects that units of the gaze samples are , as some methods use physiologically plausible velocity and acceleration thresholds.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial"</span><span class="op">)</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, sample_rate <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="multiple-trials">Multiple trials<a class="anchor" aria-label="anchor" href="#multiple-trials"></a>
+</h3>
+<p>When the recording spans multiple trials, you need to specify this via <code>trial</code> parameter. This way velocity computation and saccade detection methods respect trial boundaries.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(monocular_ten_trials)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>saccades <span class="ot">&lt;-</span> <span class="fu">extract_saccades</span>(monocular_ten_trials<span class="sc">$</span>x</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                             monocular_ten_trials<span class="sc">$</span>y, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                             <span class="dv">500</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trial =</span> monocular_ten_trials<span class="sc">$</span>trial)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="binocular-data">Binocular data<a class="anchor" aria-label="anchor" href="#binocular-data"></a>
+</h3>
+<p>There are three ways in which binocular data can be treated based on the value of <code>binocular</code> parameter:</p>
+<ul>
+<li>
+<code>binocular = "merge"</code> (default): sample votes are obtained from both eyes and for all methods and then averaged. This way only binocular saccades (i.e., eye movements with a sufficient temporal overlap between eyes) are detected. <code>Eye = "Binocular"</code> in saccade description.</li>
+<li>
+<code>binocular = "cyclopean"</code> : binocular data is converted to an average cyclopean image before voting and saccades detection. <code>Eye = "Cyclopean"</code> in saccade description.</li>
+<li>
+<code>binocular = "monocular"</code> : saccades are extracted independently for each eye. <code>Eye = "Left"</code> or <code>Eye = "Right"</code> in saccade description.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial_binocular"</span><span class="op">)</span></span>
+<span><span class="co"># binocular saccades only</span></span>
+<span><span class="va">saccades_b</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      sample_rate <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># cyclopean saccades from binocular data</span></span>
+<span><span class="va">saccades_c</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      sample_rate <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>                                      binocular <span class="op">=</span> <span class="st">"cyclopean"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># monocular saccades from binocular data</span></span>
+<span><span class="va">saccades_m</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                                      sample_rate <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>                                      binocular <span class="op">=</span> <span class="st">"monocular"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="specifying-methods">Specifying methods<a class="anchor" aria-label="anchor" href="#specifying-methods"></a>
+</h3>
+<p>By default, all implemented methods are used for saccade detection but, if necessary, you can use their subset or even a single method. Note that you can also supply your own saccade detection function, please see <em>Using custom methods</em> vignette.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Using a single method</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, methods <span class="op">=</span> <span class="va">method_om</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Using two methods</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">method_ek</span>, <span class="va">method_om</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Individual methods have their own parameters that are passed via <code>options</code> argument, which is a named list with <code>&lt;parameter-name&gt; = &lt;value&gt;</code> pairs. You can find information on specific parameters and their default values in <em>Implemented Methods</em> vignette. Here is an example of modifying a velocity threshold, measured in units of standard deviation, for Engbert &amp; Kliegl (2003) method. The default value is 6 but we can make it stricter</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ek_velocity_threshold"</span> <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="altering-voting-threshold">Altering voting threshold<a class="anchor" aria-label="anchor" href="#altering-voting-threshold"></a>
+</h3>
+<p>The voting threshold is the number of methods that must label a sample as a potential saccade. By default, all but one method must agree for a sample to be considered for a saccade (<code>vote_threshold = length(methods) - 1</code>) but is 1, if only a single method was passed to the function. You can make voting more or less restrictive via <code>vote_threshold</code> parameter.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># A strict unanimous decision threshold</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, vote_threshold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># A slacker criterion that at least one of the three methods must label sample as a saccade</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, vote_threshold <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="specifying-velocity-computation-method">Specifying velocity computation method<a class="anchor" aria-label="anchor" href="#specifying-velocity-computation-method"></a>
+</h3>
+<p>Because the gaze samples tend to be noisy, different methods use various approaches for computing velocity from noisy samples. Methods by Engbert &amp; Kliegl (2003) and Otero-Millan et al. (2014) used the same approach based on averaging over multiple samples to compute velocity, whereas Nyström &amp; Holmqvist (2010) compute a simple derivative and then filter it. By default, package uses the former approach (<code>velocity_function = diff_ek</code>) but you can also use the latter (<code>velocity_function = diff_nh</code>) or implement a custom method (see <em>Velocity computation</em> vignette). Acceleration is computed the same way but from velocity samples. Here is an example of using Nyström &amp; Holmqvist (2010) velocity computation</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, velocity_function <span class="op">=</span> <span class="va">diff_nh</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="specifying-saccade-temporal-properties">Specifying saccade temporal properties<a class="anchor" aria-label="anchor" href="#specifying-saccade-temporal-properties"></a>
+</h3>
+<p>Once the votes are in, saccades detection is based on their minimal duration (<code>minimal_duration_ms</code> parameter, defaults to 12 ms) and minimal time between the saccades (<code>minimal_separation_ms</code>, defaults to 12 ms).</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Only longish saccades are extracted</span></span>
+<span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, minimal_duration_ms <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="return-values">Return values<a class="anchor" aria-label="anchor" href="#return-values"></a>
+</h2>
+<div class="section level3">
+<h3 id="saccade-description-table">Saccade description table<a class="anchor" aria-label="anchor" href="#saccade-description-table"></a>
+</h3>
+<p>The <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> function returns a table with following columns:</p>
+<ul>
+<li>
+<code>Trial</code> Trial index.</li>
+<li>
+<code>Eye</code> “Monocular” for monocular inputs. “Cyclopean” for binocular data that was averaged before applying algorithms. “Binocular” for binocular data with votes averaged after applying algorithms. “Left” or “Right” for binocular data when eyes are processed independently.</li>
+<li>
+<code>OnsetSample</code> Index of the first sample.</li>
+<li>
+<code>OffsetSample</code> Index of the last sample.</li>
+<li>
+<code>Onset</code> Onset time relative to the trial start in milliseconds.</li>
+<li>
+<code>Offset</code> Offset time relative to the trial start in milliseconds.</li>
+<li>
+<code>Duration</code> Duration in milliseconds.</li>
+<li>
+<code>DisplacementX</code> Horizontal displacement measured from the first to the last sample.</li>
+<li>
+<code>DisplacementY</code> Vertical displacement measured from the first to the last sample.</li>
+<li>
+<code>Displacement</code> Displacement magnitude measured from the first to the last sample.</li>
+<li>
+<code>DisplacementPhi</code> Displacement direction measured from the first to the last sample.</li>
+<li>
+<code>AmplitudeX</code> Horizontal displacement measured from the leftmost to the rightmost sample.</li>
+<li>
+<code>AmplitudeY</code> Vertical displacement measured from the lowest to the uppermost sample.</li>
+<li>
+<code>Amplitude</code> Displacement magnitude measured from the most extreme samples.</li>
+<li>
+<code>AmplitudePhi</code> Displacement direction measured from the most extreme samples.</li>
+<li>
+<code>VelocityPeak</code> Peak velocity.</li>
+<li>
+<code>VelocityAvg</code> Average velocity.</li>
+<li>
+<code>AccelerationPeak</code> Peak acceleration.</li>
+<li>
+<code>AccelerationAvg</code> Average acceleration.</li>
+<li>
+<code>AccelerationStart</code> Peak acceleration before peak velocity was reached.</li>
+<li>
+<code>AccelerationStop</code> Peak acceleration after peak velocity was reached.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="sample-votes">Sample votes<a class="anchor" aria-label="anchor" href="#sample-votes"></a>
+</h3>
+<p>Alternatively, if you use parameter <code>return_votes = TRUE</code> the function can return votes per sample and method (and eye, for binocular data). Please see <em>Using sample votes</em> vignette for details.</p>
+</div>
 </div>
 </div>
   </div>

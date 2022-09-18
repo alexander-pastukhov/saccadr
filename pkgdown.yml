@@ -5,5 +5,6 @@ articles:
   methods: methods.html
   using_custom_methods: using_custom_methods.html
   using_sample_votes: using_sample_votes.html
-last_built: 2022-09-06T08:17Z
+  velocity_computation: velocity_computation.html
+last_built: 2022-09-18T10:44Z
 

@@ -4,7 +4,7 @@ a given sample belongs to a saccade. Next, saccades are identified via a majorit
 vote_threshold parameter, as well as a minimal duration and minimal temporal separation criteria.
 Please note that units of the gaze samples must be in  degrees of visual angle. The units are important
 as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds. 
-By default, ensemble includes methods proposed by Engbret &amp;amp; Kliegl (2003) (&quot;ek&quot;),
+By default, ensemble includes methods proposed by Engbert &amp;amp; Kliegl (2003) (&quot;ek&quot;),
 Otero-Millan et al. (&quot;om&quot;), and Nyström &amp;amp; Holmqvist (2010) (&quot;nh&quot;), 
 see Implemented Methods vignette. However, it can be extended
 via custom methods, see Using Custom Methods vignette.
@@ -50,6 +50,9 @@ per sample instead (return_votes = TRUE)."><!-- mathjax --><script src="https://
     <li>
       <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="../articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -71,7 +74,7 @@ a given sample belongs to a saccade. Next, saccades are identified via a majorit
 <code>vote_threshold</code> parameter, as well as a minimal duration and minimal temporal separation criteria.
 Please note that units of the gaze samples must be in  <strong>degrees of visual angle</strong>. The units are important
 as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds.</p> 
-<p>By default, ensemble includes methods proposed by Engbret &amp; Kliegl (2003) (<code>"ek"</code>),
+<p>By default, ensemble includes methods proposed by Engbert &amp; Kliegl (2003) (<code>"ek"</code>),
 Otero-Millan et al. (<code>"om"</code>), and Nyström &amp; Holmqvist (2010) (<code>"nh"</code>), 
 see <em>Implemented Methods</em> vignette. However, it can be extended
 via custom methods, see <em>Using Custom Methods</em> vignette.</p>
@@ -85,12 +88,11 @@ per sample instead (<code>return_votes = TRUE</code>).</p>
 <span>  <span class="va">y</span>,</span>
 <span>  <span class="va">sample_rate</span>,</span>
 <span>  trial <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ek"</span>, <span class="st">"om"</span>, <span class="st">"nh"</span><span class="op">)</span>,</span>
+<span>  methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">method_ek</span>, <span class="va">method_om</span>, <span class="va">method_nh</span><span class="op">)</span>,</span>
+<span>  velocity_function <span class="op">=</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="va"><a href="diff_ek.html">diff_ek</a></span>,</span>
 <span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  velocity_time_window <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  binocular <span class="op">=</span> <span class="st">"merge"</span>,</span>
-<span>  vote_threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">(</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span> <span class="op">-</span></span>
-<span>    <span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.99</span><span class="op">)</span>,</span>
+<span>  vote_threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  minimal_duration_ms <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  minimal_separation_ms <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  return_votes <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -120,31 +122,37 @@ Velocity, acceleration, and saccades themselves are computed respecting trial bo
 
 
 <dt>methods</dt>
-<dd><p>A <em>list</em> (not a vector!) with names of package methods (character) or external functions that
+<dd><p>A list with saccade detection methods, can include external functions that
 implement sample classification (see <em>Using Custom Methods</em> vignette). Package methods include
-Engbret &amp; Kliegl (2003) (<code>"ek"</code>), Otero-Millan et al. (<code>"om"</code>), Nyström and Holmqvist (2010) (<code>"nh"</code>).</p></dd>
+Engbert &amp; Kliegl (2003) (<code>method_ek</code>), Otero-Millan et al. (2014) (<code>method_om</code>), 
+Nyström and Holmqvist (2010) (<code>method_nh</code>). Defaults to the list of all internally implemented
+methods: <code>list(method_ek, method_om, method_nh)</code>.</p></dd>
+
+
+<dt>velocity_function</dt>
+<dd><p>A handle to a function to compute velocity and acceleration. Defaults to a method
+suggested by Engbert &amp; Kliegl (2003) <code><a href="diff_ek.html">diff_ek</a></code>. The package also implements the method proposed
+by Nyström and Holmqvist (2010) <code><a href="diff_nh.html">diff_nh</a></code>. See vignette "Velocity computation" for details and
+information on how to implement a custom method.</p></dd>
 
 
 <dt>options</dt>
-<dd><p>A named list with options for a specific method, see documentation on specific method for details.</p></dd>
-
-
-<dt>velocity_time_window</dt>
-<dd><p>Time window for computing velocity and acceleration in milliseconds.</p></dd>
+<dd><p>A named list with options for saccade detection (see <code><a href="method_ek.html">method_ek</a></code>, <code><a href="method_om.html">method_om</a></code>,
+<code><a href="method_nh.html">method_nh</a></code>) and velocity (<code><a href="diff_ek.html">diff_ek</a></code>, <code><a href="diff_nh.html">diff_nh</a></code>) computation.
+See documentation on specific method for details.</p></dd>
 
 
 <dt>binocular</dt>
 <dd><p>Specifies how a binocular data is treated. Options are <code>"cyclopean"</code> (binocular data is
 converted to an average cyclopean image before saccades are extracted), <code>"monocular"</code> (saccades
-are extracted independently for each eye), <code>"merge"</code> (default, saccades are extracted for each eye
-independently but saccades from different eyes that temporally overlap are averaged into a binocular
-saccade).</p></dd>
+are extracted independently for each eye), <code>"merge"</code> (default, sample votes are obtained from both eyes and
+for all methods and then averaged. This way only binocular saccades, i.e., eye movements with a sufficient temporal
+ overlap between eyes, are detected.).</p></dd>
 
 
 <dt>vote_threshold</dt>
-<dd><p>Value between 0..1 defining a vote threshold for a saccade.
-By default, all but one method (\(threshold = \frac{N-1}{N}\)
-where N is number of methods used) must agree for a sample to be considered for a saccade.
+<dd><p>Value between 1 and N (where N is number of used methods) defining a vote threshold for a
+saccade. By default, all but one method \(threshold = N-1\) must agree for a sample to be considered for a saccade.
 Threshold of 1 is applied if a single method is used.</p></dd>
 
 
@@ -166,7 +174,7 @@ or votes per sample (<code>TRUE</code>).</p></dd>
     <h2>Value</h2>
     
 
-<p>A <code>data.frame</code> with saccade properties (see **details**), if <code>return_votes = FALSE</code>.
+<p>A <code>data.frame</code> with saccade properties (see <strong>details</strong>), if <code>return_votes = FALSE</code>.
 Alternatively, it returns votes per sample (<code>return_votes = TRUE</code>). For a monocular processing (monocular
 input, cyclopean or merged binocular data) it is a matrix with <code>nrow(x)</code> rows and <code>length(methods)</code></p>
 
@@ -194,7 +202,7 @@ when eyes are processed independently.</p></li>
 <li><p><code>AmplitudeX</code> Horizontal displacement measured from the <em>leftmost</em> to the <em>rightmost</em> sample.</p></li>
 <li><p><code>AmplitudeY</code> Vertical displacement measured from the <em>lowest</em> to the <em>uppermost</em> sample.</p></li>
 <li><p><code>Amplitude</code> Displacement magnitude measured from the most extreme samples.</p></li>
-<li><p><code>Amplitude</code> Displacement direction measured from the most extreme samples.</p></li>
+<li><p><code>AmplitudePhi</code> Displacement direction measured from the most extreme samples.</p></li>
 <li><p><code>VelocityPeak</code> Peak velocity.</p></li>
 <li><p><code>VelocityAvg</code> Average velocity.</p></li>
 <li><p><code>AccelerationPeak</code> Peak acceleration.</p></li>
@@ -202,11 +210,63 @@ when eyes are processed independently.</p></li>
 <li><p><code>AccelerationStart</code> Peak acceleration <em>before</em> peak velocity was reached.</p></li>
 <li><p><code>AccelerationStop</code> Peak acceleration <em>after</em> peak velocity was reached.</p></li>
 </ul></div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="method_ek.html">method_ek</a></code>, <code><a href="method_om.html">method_om</a></code>, <code><a href="method_nh.html">method_nh</a></code>, <code><a href="diff_ek.html">diff_ek</a></code>, <code><a href="diff_nh.html">diff_nh</a></code></p></div>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Single trial</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Multiple trials</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">monocular_ten_trials</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">monocular_ten_trials</span><span class="op">$</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>                             <span class="va">monocular_ten_trials</span><span class="op">$</span><span class="va">y</span>, </span></span>
+<span class="r-in"><span>                             <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                             trial <span class="op">=</span> <span class="va">monocular_ten_trials</span><span class="op">$</span><span class="va">trial</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co"># binocular saccades                            </span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial_binocular"</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">saccades_b</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                         <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                         sample_rate <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                         </span></span>
+<span class="r-in"><span> <span class="co"># cyclopean saccades from binocular data</span></span></span>
+<span class="r-in"><span><span class="va">saccades_c</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                        <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                        sample_rate <span class="op">=</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>                                        binocular <span class="op">=</span> <span class="st">"cyclopean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co"># monocular saccades from binocular data</span></span></span>
+<span class="r-in"><span><span class="va">saccades_m</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                       <span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'yL'</span>, <span class="st">'yR'</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                                       sample_rate <span class="op">=</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>                                       binocular <span class="op">=</span> <span class="st">"monocular"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                             </span></span>
+<span class="r-in"><span><span class="co"># Using a single method</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, methods <span class="op">=</span> <span class="va">method_om</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Using two methods</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>                             <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>,</span></span>
+<span class="r-in"><span>                             <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                             methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">method_ek</span>, <span class="va">method_om</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#  Alternative velocity computation method</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, velocity_function <span class="op">=</span> <span class="va">diff_nh</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A strict unanimous decision threshold</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, vote_threshold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A slacker criterion that at least one of the three methods must label sample as a saccade</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, vote_threshold <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Only longish saccades are extracted</span></span></span>
+<span class="r-in"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">extract_saccades</span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, minimal_duration_ms <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>

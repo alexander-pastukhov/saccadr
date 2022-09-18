@@ -58,6 +58,9 @@
     <li>
       <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="../articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -86,29 +89,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">saccadr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: dplyr</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span><span class="co">#&gt; Loading required package: rlang</span></span>
-<span><span class="co">#&gt; Loading required package: cluster</span></span>
-<span><span class="co">#&gt; Loading required package: signal</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'signal'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:dplyr':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, poly</span></span>
-<span><span class="co">#&gt; Loading required package: tidyr</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">saccadr</span><span class="op">)</span></span></code></pre></div>
 <p>Function <code><a href="../reference/extract_saccades.html">extract_saccades()</a></code> has an option to return
 sample votes for each method via <code>return_votes = TRUE</code>
 parameter. Here is an example of using them for internally implemented
@@ -116,17 +97,20 @@ methods.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">methods_to_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ek"</span>, <span class="st">"om"</span>, <span class="st">"nh"</span><span class="op">)</span></span>
-<span><span class="va">votes</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
-<span>                                   y <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>,</span>
-<span>                                   sample_rate <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                                   methods <span class="op">=</span> <span class="va">methods_to_use</span>,</span>
-<span>                                   return_votes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">methods_to_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Engbert &amp; Kliegl (2003)"</span> <span class="op">=</span> <span class="va">method_ek</span>,</span>
+<span>                       <span class="st">"Otero-Millan et al. (2014)"</span> <span class="op">=</span> <span class="va">method_om</span>,</span>
+<span>                       <span class="st">"Nyström and Holmqvist (2010)"</span> <span class="op">=</span> <span class="va">method_nh</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
+<span>                          y <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>,</span>
+<span>                          sample_rate <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>                          methods <span class="op">=</span> <span class="va">methods_to_use</span>,</span>
+<span>                          return_votes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">single_trial_with_votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">imethod</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods_to_use</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">single_trial</span></span>
-<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">methods_to_use</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">methods_to_use</span><span class="op">)</span><span class="op">[</span><span class="va">imethod</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">&lt;-</span> <span class="va">votes</span><span class="op">[</span>, <span class="va">imethod</span><span class="op">]</span></span>
 <span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">==</span> <span class="fl">1</span>,</span>
 <span>                                                         levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
@@ -135,8 +119,34 @@ methods.</p>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="st">"rbind"</span>, <span class="va">single_trial_with_votes</span><span class="op">)</span>, </span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, color <span class="op">=</span> <span class="va">IsSaccade</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Method</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Method</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-2-1.png" width="700">
+Same data but using <span class="citation">@NystromHolmqvist2010</span>
+to compute velocity and acceleration</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
+<span>                          y <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>,</span>
+<span>                          sample_rate <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>                          methods <span class="op">=</span> <span class="va">methods_to_use</span>,</span>
+<span>                          velocity_function <span class="op">=</span> <span class="va">diff_nh</span>,</span>
+<span>                          return_votes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">single_trial_with_votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">imethod</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">methods_to_use</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">single_trial</span></span>
+<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">methods_to_use</span><span class="op">)</span><span class="op">[</span><span class="va">imethod</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">&lt;-</span> <span class="va">votes</span><span class="op">[</span>, <span class="va">imethod</span><span class="op">]</span></span>
+<span>  <span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">single_trial_with_votes</span><span class="op">[[</span><span class="va">imethod</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IsSaccade</span> <span class="op">==</span> <span class="fl">1</span>,</span>
+<span>                                                         levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="st">"rbind"</span>, <span class="va">single_trial_with_votes</span><span class="op">)</span>, </span>
+<span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, color <span class="op">=</span> <span class="va">IsSaccade</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Method</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

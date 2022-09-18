@@ -58,6 +58,9 @@
     <li>
       <a href="../articles/using_sample_votes.html">Using Sample Votes</a>
     </li>
+    <li>
+      <a href="../articles/velocity_computation.html">Velocity computation</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -125,7 +128,7 @@ computation.</li>
 <li>
 <code>options</code> a named list with method specific options. See
 example below for how to use them. See also
-<code>option_or _default()</code> function.</li>
+<code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
 </ul>
 <p>Your function must return a vector of the same length as
 <code>x</code> with votes (<span class="math inline">\(1\)</span>
@@ -167,35 +170,6 @@ internally implemented methods:</p>
 <span>                                      sample_rate <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>                                      methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ek"</span>, <span class="st">"om"</span>, <span class="st">"nh"</span>, <span class="va">simple_threshold_method</span><span class="op">)</span>,</span>
 <span>                                      options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"st_velocity_threshold"</span> <span class="op">=</span> <span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="velocity-computation">Velocity computation<a class="anchor" aria-label="anchor" href="#velocity-computation"></a>
-</h2>
-<p>Acceleration is computed the same way but from velocity samples.</p>
-<p>Horizontal and vertical velocity components are computed as <span class="math display">\[v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] -
-x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}\]</span> where <span class="math inline">\(i\)</span> is the index of a sample, <span class="math inline">\(\Delta t = \frac{1}{sample~rate}\)</span> is a
-duration of a single sampling frame, and <span class="math inline">\(N\)</span> is an <em>odd</em> integer width of the
-moving average used to compute the velocity. In <span class="citation">@EngbertKliegl2003</span>, <span class="math inline">\(N=5\)</span> and <span class="math inline">\(\Delta t = 4\)</span> (250 Hz sampling rate) that
-translates into a 20 ms moving average window (default value used in the
-method implementation). Below is a derivation that shows the equivalence
-of the formula above to formula 1 in <span class="citation">@EngbertKliegl2003</span>. For <span class="math inline">\(N=5\)</span>: <span class="math display">\[\frac{\sum_{j=1}^{(5-1)/2}x[i+j] -
-x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=\]</span> <span class="math display">\[\frac{\sum_{j=1}^{2}x[i+j] -
-x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=\]</span></p>
-<p><span class="math display">\[\frac{x[i+1] - x[i-1]+x[i+2] -
-x[i-2]}{2\Delta t + 4\Delta t}=\]</span> <span class="math display">\[\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta
-t}\]</span></p>
-<p>As noted in <span class="citation">@Otero-Millan2014</span>, this is
-equivalent to smoothing <span class="math inline">\(x\)</span> with a
-normalized Bartlett window (<span class="math inline">\(n=6\)</span> for
-five-sample velocity computation) and differentiating, see the code
-below.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># assuming vector `x` and a scalar `sample_rate`</span></span>
-<span><span class="va">barlett_window</span> <span class="op">&lt;-</span> <span class="fu">signal</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/signal/man/windowing.html" class="external-link">bartlett</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
-<span><span class="va">smoothed_x</span> <span class="op">&lt;-</span> <span class="fu">signal</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/signal/man/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">barlett_window</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">barlett_window</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">dx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">smoothed_x</span><span class="op">)</span> <span class="op">*</span> <span class="va">sample_rate</span></span>
-<span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">v</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="va">dx</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 </div>
   </div>
 
