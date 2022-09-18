@@ -1,6 +1,6 @@
 Package: saccadr
 Type: Package
-Title: A Modular And Extendable R Package To Extract (Micro)Saccades From Gaze Samples Via An Ensemble Of Methods Approach.
+Title: A Modular And Extendable R Package To Extract (Micro)Saccades From Gaze Samples Via An Ensemble Of Methods Approach
 Version: 0.1.0
 Date: 2022-03-08
 Authors@R:
@@ -36,5 +36,6 @@ Depends:
 Suggests:
     rmarkdown,
     knitr,
-    ggplot2
+    ggplot2,
+    spelling
 Language: en-US
