@@ -68,8 +68,7 @@
 
 
 
-
-<div class="row">
+<script src="using_custom_methods_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Using Custom Methods</h1>
             
@@ -80,9 +79,7 @@
 
     
     
-<p>You can pass a custom function to the <code><a href="../reference/extract_saccades.html">extract_saccades()</a></code>
-alongside the internally implemented method. The function must be
-declared as follows:</p>
+<p>You can pass a custom function to the <code><a href="../reference/extract_saccades.html">extract_saccades()</a></code> alongside the internally implemented method. The function must be declared as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_saccade_voting_method</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,</span>
 <span>                                         <span class="va">y</span>,</span>
@@ -96,46 +93,24 @@ declared as follows:</p>
 <span>  </span>
 <span>  <span class="va">sample_votes</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Arguments that are passed to the function (all vectors/tables have
-the same length/number of rows):</p>
+<p>Arguments that are passed to the function (all vectors/tables have the same length/number of rows):</p>
 <ul>
 <li>
-<code>x</code>, <code>y</code> vectors with <em>monocular</em>
-samples (either for one of the eyes or cyclopean). On the one hand, you
-can assume that samples are in degrees of visual angle as the package
-users are warned that using non-standard units may invalidate some
-internally implemented methods. On the other hand, as you are
-implementing a custom method for your own data, you can treat them in
-the units you see fit (input vectors <code>x</code> and <code>y</code>
-are not transformed but for averaging in case of cyclopean data).</li>
+<code>x</code>, <code>y</code> vectors with <em>monocular</em> samples (either for one of the eyes or cyclopean). On the one hand, you can assume that samples are in degrees of visual angle as the package users are warned that using non-standard units may invalidate some internally implemented methods. On the other hand, as you are implementing a custom method for your own data, you can treat them in the units you see fit (input vectors <code>x</code> and <code>y</code> are not transformed but for averaging in case of cyclopean data).</li>
 <li>
-<code>vel</code> and <code>acc</code> are data frames with velocity
-and acceleration samples. Each table has columns <code>x</code>
-(horizontal component), <code>y</code> (vertical component), and
-<code>amp</code> (amplitude). See below for details on velocity
-computation.</li>
+<code>vel</code> and <code>acc</code> are data frames with velocity and acceleration samples. Each table has columns <code>x</code> (horizontal component), <code>y</code> (vertical component), and <code>amp</code> (amplitude). See below for details on velocity computation.</li>
 <li>
 <code>sample_rate</code> scalar value in Hz.</li>
 <li>
 <code>trial</code> vector with trial index per sample.</li>
 <li>
-<code>options</code> a named list with method-specific options. See
-the example below for how to use them. See also
-<code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
+<code>options</code> a named list with method-specific options. See the example below for how to use them. See also <code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
 </ul>
-<p>Your function must return a vector of the same length as
-<code>x</code> with votes (<span class="math inline">\(1\)</span> if
-sample is a potential saccade, <span class="math inline">\(0\)</span>
-otherwise, you can also use logical values).</p>
+<p>Your function must return a vector of the same length as <code>x</code> with votes (<span class="math inline">\(1\)</span> if sample is a potential saccade, <span class="math inline">\(0\)</span> otherwise, you can also use logical values).</p>
 <div class="section level2">
 <h2 id="example-implementation">Example implementation<a class="anchor" aria-label="anchor" href="#example-implementation"></a>
 </h2>
-<p>Here is an example implementation of an overly simple custom method
-that labels a sample as a saccade if its velocity exceeds a predefined
-threshold. It expects the threshold parameter as
-<code>"st_velocity_threshold"</code> member of the list and uses a
-default threshold of <span class="math inline">\(50 \deg / s\)</span>
-(an arbitrary number!) if no threshold was provided.</p>
+<p>Here is an example implementation of an overly simple custom method that labels a sample as a saccade if its velocity exceeds a predefined threshold. It expects the threshold parameter as <code>"st_velocity_threshold"</code> member of the list and uses a default threshold of <span class="math inline">\(50 \deg / s\)</span> (an arbitrary number!) if no threshold was provided.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple_threshold_method</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,</span>
 <span>                                    <span class="va">y</span>,</span>
@@ -154,8 +129,7 @@ default threshold of <span class="math inline">\(50 \deg / s\)</span>
 <span>  <span class="co"># return votes</span></span>
 <span>  <span class="va">sample_vote</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Once you implemented your method, you can pass it alongside
-internally implemented methods:</p>
+<p>Once you implemented your method, you can pass it alongside internally implemented methods:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial"</span><span class="op">)</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>

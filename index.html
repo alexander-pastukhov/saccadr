@@ -104,7 +104,7 @@
 <p>To install from github</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"alexander-pastukhov/saccadr"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">install_github</span><span class="op">(</span><span class="st">"alexander-pastukhov/saccadr"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -117,11 +117,11 @@
 <h3 id="multiple-trials">Multiple trials<a class="anchor" aria-label="anchor" href="#multiple-trials"></a>
 </h3>
 <p>When the recording spans multiple trials, you need to specify this via <code>trial</code> parameter. This way velocity computation and saccade detection methods respect trial boundaries.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(monocular_ten_trials)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>saccades <span class="ot">&lt;-</span> <span class="fu">extract_saccades</span>(monocular_ten_trials<span class="sc">$</span>x</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                             monocular_ten_trials<span class="sc">$</span>y, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                             <span class="dv">500</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trial =</span> monocular_ten_trials<span class="sc">$</span>trial)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">data</span>(monocular_ten_trials)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>saccades &lt;-<span class="st"> </span><span class="kw">extract_saccades</span>(monocular_ten_trials<span class="op">$</span>x</span>
+<span id="cb3-3"><a href="#cb3-3"></a>                             monocular_ten_trials<span class="op">$</span>y, </span>
+<span id="cb3-4"><a href="#cb3-4"></a>                             <span class="dv">500</span>,</span>
+<span id="cb3-5"><a href="#cb3-5"></a>                             <span class="dt">trial =</span> monocular_ten_trials<span class="op">$</span>trial)</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="binocular-data">Binocular data<a class="anchor" aria-label="anchor" href="#binocular-data"></a>
