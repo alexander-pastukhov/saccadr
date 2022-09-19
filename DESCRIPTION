@@ -18,6 +18,9 @@ Description: A modular and extendable approach to extract (micro)saccades from g
   methods but can be extended via custom functions. It also uses a modular approach to compute velocity and
   acceleration from noisy samples. Finally, you can obtain methods votes per gaze sample instead of saccades.
 License: GPL (>= 3)
+URL: https://github.com/alexander-pastukhov/saccadr/,
+    https://alexander-pastukhov.github.io/saccadr/
+BugReports: https://github.com/alexander-pastukhov/saccadr/issues/
 Imports: 
     magrittr,
     Rcpp (>= 1.0.8)
