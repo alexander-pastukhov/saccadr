@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/404.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/methods.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/articles/methods.html</loc>
   </url>
   <url>
-    <loc>/articles/using_custom_methods.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/articles/using_custom_methods.html</loc>
   </url>
   <url>
-    <loc>/articles/using_sample_votes.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/articles/using_sample_votes.html</loc>
   </url>
   <url>
-    <loc>/articles/velocity_computation.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/articles/velocity_computation.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/index.html</loc>
   </url>
   <url>
-    <loc>/reference/compute_velocity_ek.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/compute_velocity_ek.html</loc>
   </url>
   <url>
-    <loc>/reference/diff_ek.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/diff_ek.html</loc>
   </url>
   <url>
-    <loc>/reference/diff_nh.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/diff_nh.html</loc>
   </url>
   <url>
-    <loc>/reference/extract_saccades.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/extract_saccades.html</loc>
   </url>
   <url>
-    <loc>/reference/filter_via_savitzky_golay.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/filter_via_savitzky_golay.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/input_to_matrix.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/input_to_matrix.html</loc>
   </url>
   <url>
-    <loc>/reference/method_ek.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/method_ek.html</loc>
   </url>
   <url>
-    <loc>/reference/method_nh.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/method_nh.html</loc>
   </url>
   <url>
-    <loc>/reference/method_om.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/method_om.html</loc>
   </url>
   <url>
-    <loc>/reference/monocular_ten_trials.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/monocular_ten_trials.html</loc>
   </url>
   <url>
-    <loc>/reference/option_or_default.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/option_or_default.html</loc>
   </url>
   <url>
-    <loc>/reference/pipe.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>/reference/saccadr.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/saccadr.html</loc>
   </url>
   <url>
-    <loc>/reference/sd_via_median_estimator.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/sd_via_median_estimator.html</loc>
   </url>
   <url>
-    <loc>/reference/single_trial.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/single_trial.html</loc>
   </url>
   <url>
-    <loc>/reference/single_trial_binocular.html</loc>
+    <loc>https://alexander-pastukhov.github.io/saccadr/reference/single_trial_binocular.html</loc>
   </url>
 </urlset>
