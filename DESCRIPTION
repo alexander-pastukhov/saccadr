@@ -1,7 +1,7 @@
 Package: saccadr
 Type: Package
-Title: A Modular and Extendable R Package to Extract (Micro)Saccades from Gaze Samples via an Ensemble of Methods Approach
-Version: 0.1.0
+Title: Extract Saccades via an Ensemble of Methods Approach
+Version: 0.1.1
 Date: 2022-09-18
 Authors@R:
   person(given = "Alexander",
@@ -9,7 +9,8 @@ Authors@R:
          role = c("aut", "cre"),
          email ="pastukhov.alexander@gmail.com",
          comment = c(ORCID = "0000-0002-8738-8591"))
-Description: Although there is an agreement about a general definition of a saccade, the more specific details are harder to agree upon.
+Description: A modular and extendable approach to extract (micro)saccades from gaze samples via an ensemble of methods.
+  Although there is an agreement about a general definition of a saccade, the more specific details are harder to agree upon.
   Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity,
   acceleration, etc. The package uses three methods (Engbert and Kliegl (2003) <doi:10.1016/S0042-6989(03)00084-1>, 
   Otero-Millan et al. (2014)<doi:10.1167/14.2.18>, and Nyström and Holmqvist (2010) <doi:10.3758/BRM.42.1.188>)
