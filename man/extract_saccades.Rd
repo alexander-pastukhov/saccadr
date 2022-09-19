@@ -69,13 +69,13 @@ or votes per sample (\code{TRUE}).}
 A \code{data.frame} with saccade properties (see \strong{details}), if \code{return_votes = FALSE}.
 Alternatively, it returns votes per sample (\code{return_votes = TRUE}). For a monocular processing (monocular
 input, cyclopean or merged binocular data) it is a matrix with \code{nrow(x)} rows and \code{length(methods)}
- columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element
- \code{list} with same matrices but per eye.
+ columns with 0/1 votes for each sample and method. For binocular processing, function returns a two element \code{list} with
+ the similar matrices but per eye.
 }
 \description{
 Extract saccades from samples using votes from selected methods. Each method votes whether
 a given sample belongs to a saccade. Next, saccades are identified via a majority vote using the 
-\code{vote_threshold} parameter, as well as a minimal duration and minimal temporal separation criteria.
+\code{vote_threshold} parameter, as well as a minimum duration and minimal temporal separation criteria.
 Please note that units of the gaze samples must be in  \strong{degrees of visual angle}. The units are important
 as some methods use specific (e.g., physiologically plausible) velocity and acceleration thresholds.
  
@@ -84,7 +84,7 @@ Otero-Millan et al. (\code{"om"}), and Nyström & Holmqvist (2010) (\code{"nh"})
 see \emph{Implemented Methods} vignette. However, it can be extended
 via custom methods, see \emph{Using Custom Methods} vignette.
 
-By default, the function returns a table with identified saccades but can return a matrix with method's votes
+By default, the function returns a table with identified saccades but can return a matrix with methods' votes
 per sample instead (\code{return_votes = TRUE}).
 }
 \details{
