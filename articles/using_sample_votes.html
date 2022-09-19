@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">saccadr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -121,9 +121,9 @@ methods.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Method</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-2-1.png" width="700">
-Same data but using <span class="citation">@NystromHolmqvist2010</span>
-to compute velocity and acceleration</p>
+<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-2-1.png" width="100%"></p>
+<p>Same data but using <span class="citation">Nyström and Holmqvist
+(2010)</span> to compute velocity and acceleration</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
 <span>                          y <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>,</span>
@@ -146,7 +146,14 @@ to compute velocity and acceleration</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Method</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p><img src="using_sample_votes_files/figure-html/unnamed-chunk-3-1.png" width="100%"></p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-NystromHolmqvist2010" class="csl-entry">
+Nyström, Marcus, and Kenneth Holmqvist. 2010. <span>“<span class="nocase">An adaptive algorithm for fixation, saccade, and glissade
+detection in eyetracking data</span>.”</span> <em>Behavior Research
+Methods</em> 42 (1): 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link">https://doi.org/10.3758/BRM.42.1.188</a>.
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

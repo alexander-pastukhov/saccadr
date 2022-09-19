@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">saccadr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -118,8 +118,8 @@ as <span class="math display">\[v_x[i] =
 \frac{\sum_{j=1}^{(N-1)/2}x[i+j] -
 x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}\]</span> where <span class="math inline">\(i\)</span> is the index of a sample, <span class="math inline">\(\Delta t = \frac{1}{sample~rate}\)</span> is a
 duration of a single sampling frame, and <span class="math inline">\(N\)</span> is an <em>odd</em> integer width of the
-moving average used to compute the velocity. In <span class="citation">Engbert and Kliegl (2003)</span>, <span class="math inline">\(N=5\)</span> and <span class="math inline">\(\Delta t = 4\)</span> (250 Hz sampling rate) that
-translates into a 20 ms moving average window (default value used in the
+moving average used to compute the velocity. In <span class="citation">Engbert and Kliegl (2003)</span>, <span class="math inline">\(N=5\)</span> and <span class="math inline">\(\Delta t = 4\)</span> (250 Hz sampling rate)
+translate into a 20 ms moving average window (default value used in the
 method implementation). Below is a derivation that shows the equivalence
 of the formula above to formula 1 in <span class="citation">Engbert and
 Kliegl (2003)</span>. For <span class="math inline">\(N=5\)</span>:
@@ -136,7 +136,7 @@ Holmqvist (2010)</span><a class="anchor" aria-label="anchor" href="#differentiat
 </h2>
 <p>Horizontal and vertical components of velocity are computed from
 adjacent samples, the amplitude is computed from the components and then
-is filtered using <a href="https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter" class="external-link">Savitzky-Golay
+is filtered using the <a href="https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter" class="external-link">Savitzky-Golay
 filter</a>. Filter order is controlled via
 <code>nh_sg_filter_order</code> option and defaults to
 <code>2</code>.</p>
@@ -145,8 +145,8 @@ filter</a>. Filter order is controlled via
 <h2 id="comparing-two-methods">Comparing two methods<a class="anchor" aria-label="anchor" href="#comparing-two-methods"></a>
 </h2>
 <p>The two methods produce comparable but different velocity values.
-However, this has only a minor effect on saccade detection, see vignette
-on <em>Using sample votes</em>.</p>
+However, this has only a minor effect on saccade detection, see a
+vignette on <em>Using sample votes</em>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># computing velocity using two methods</span></span>
 <span><span class="va">vel_ek</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="../reference/diff_ek.html">diff_ek</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
@@ -208,8 +208,8 @@ gaze coordinates or velocity components (for acceleration).</li>
 <li>
 <code>trial</code> vector with trial index per sample.</li>
 <li>
-<code>options</code> a named list with method specific options. See
-example below for how to use them. See also
+<code>options</code> a named list with method-specific options. See
+the example below for how to use them. See also
 <code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
 </ul>
 <p>The function must return a data.frame with three columns:
@@ -236,7 +236,7 @@ borders</p>
 <span>           amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">y</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>And here is a similar function but that uses an optional
-<code>custom_velocity_lag</code> parameter, so that it can be different
+<code>custom_velocity_lag</code> parameter so that it can be different
 from 1</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diff_lag_n</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>,  <span class="va">trial</span>, <span class="va">sample_rate</span>, <span class="va">options</span><span class="op">=</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>

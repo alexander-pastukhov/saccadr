@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">saccadr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -87,14 +87,14 @@
 
     
     
-<p>The package implements following methods</p>
+<p>The package implements the following methods</p>
 <ul>
 <li><span class="citation">Engbert and Kliegl (2003)</span></li>
 <li><span class="citation">Otero-Millan et al. (2014)</span></li>
 <li><span class="citation">Nyström and Holmqvist (2010)</span></li>
 </ul>
-<p>Each methods has additional parameters that can be passed via
-<code>options</code> argument of <code><a href="../reference/extract_saccades.html">extract_saccades()</a></code>
+<p>Each method has additional parameters that can be passed via the
+<code>options</code> argument of the <code><a href="../reference/extract_saccades.html">extract_saccades()</a></code>
 function.</p>
 <div class="section level2">
 <h2 id="engbertkliegl2003">
@@ -102,13 +102,13 @@ function.</p>
 </h2>
 <p>The algorithm labels a sample as a saccade if velocity, measured in
 units of its standard deviation (see below), exceeds a predefined
-threshold (defaults to <span class="math inline">\(6\)</span>) and
-duration of a super-threshold period exceed a minimal duration (defaults
-to <span class="math inline">\(12\)</span> milliseconds). This method
-makes no assumptions about velocity in the units of degrees per second
-and can be used on any data (e.g., where samples encode gaze in screen
-position units).</p>
-<p>The standard deviation is computed following a formula #2 in <span class="citation">Engbert and Kliegl (2003)</span> as</p>
+threshold (defaults to <span class="math inline">\(6\)</span>) and the
+duration of a super-threshold period exceeds a minimal duration
+(defaults to <span class="math inline">\(12\)</span> milliseconds). This
+method makes no assumptions about velocity in the units of degrees per
+second and can be used on any data (e.g., where samples encode gaze in
+screen position units).</p>
+<p>The standard deviation is computed following formula #2 in <span class="citation">Engbert and Kliegl (2003)</span> as</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>However, if the value is smaller than <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/zMachine.html" class="external-link"><code>.Machine$double.eps</code></a>,
@@ -147,15 +147,15 @@ between saccades. Defaults to <span class="math inline">\(12\)</span>.</li>
 <li>Filter them based on a minimal inter-peak interval (defaults to
 <span class="math inline">\(30\)</span> ms) and maximal allowed saccade
 rate (defaults to <span class="math inline">\(5\)</span> Hz).</li>
-<li>Identify onset and offset of a potential saccade using an absolute
-velocity threshold in degrees per second (defaults to <span class="math inline">\(3\)</span>).</li>
+<li>Identify the onset and offset of a potential saccade using an
+absolute velocity threshold in degrees per second (defaults to <span class="math inline">\(3\)</span>).</li>
 <li>Compute peak velocity and peak acceleration before and after the
 peak velocity was reached.</li>
 <li>Rotate velocity and peak acceleration via PCA and retain components
 above a predefined threshold for explained variance (defaults to <span class="math inline">\(0.05\)</span>).</li>
-<li>Perform a cluster analysis on remaining components for <span class="math inline">\(2\)</span>, <span class="math inline">\(3\)</span>, <span class="math inline">\(4\)</span>
-picking the solution with the smallest silhouette.</li>
-<li>Saccades are identified as a cluster with highest average peak
+<li>Perform a cluster analysis on the remaining components for <span class="math inline">\(2\)</span>, <span class="math inline">\(3\)</span>, and <span class="math inline">\(4\)</span> picking the solution with the smallest
+silhouette.</li>
+<li>Saccades are identified as a cluster with the highest average peak
 velocity.</li>
 </ol>
 <p>For method details and rationale for default parameter values refer
@@ -186,8 +186,8 @@ retained rotated components. Defaults to <span class="math inline">\(0.05\)</spa
 <li>Identify physiologically implausible velocity and acceleration peaks
 (defaults to <span class="math inline">\(1000 \deg/s\)</span> and <span class="math inline">\(100000 \deg/s^2\)</span>).</li>
 <li>Identify noise onset/offset as samples around the implausible
-velocity/acceleration that a above median velocity. Exluce these samples
-from analysis.</li>
+velocity/acceleration that are above median velocity. Exclude these
+samples from analysis.</li>
 <li>Identify velocity threshold <span class="math inline">\(PT =
 mean(V_{subthreshold}) + 6 \cdot std(V_{subthreshold})\)</span> via an
 iterative method starting at arbitrary <span class="math inline">\(PT\)</span> value (defaults to <span class="math inline">\(100 \deg/s\)</span>). Stop when threshold change

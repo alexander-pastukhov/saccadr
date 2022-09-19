@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">saccadr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -103,8 +103,8 @@ declared as follows:</p>
 <span>  </span>
 <span>  <span class="va">sample_votes</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Arguments that are passed to the function (all vectors / tables have
-the same length / number of rows):</p>
+<p>Arguments that are passed to the function (all vectors/tables have
+the same length/number of rows):</p>
 <ul>
 <li>
 <code>x</code>, <code>y</code> vectors with <em>monocular</em>
@@ -126,14 +126,14 @@ computation.</li>
 <li>
 <code>trial</code> vector with trial index per sample.</li>
 <li>
-<code>options</code> a named list with method specific options. See
-example below for how to use them. See also
+<code>options</code> a named list with method-specific options. See
+the example below for how to use them. See also
 <code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
 </ul>
 <p>Your function must return a vector of the same length as
-<code>x</code> with votes (<span class="math inline">\(1\)</span>
-samples belongs to a saccade, <span class="math inline">\(0\)</span> not
-a saccade, you can also use logical values).</p>
+<code>x</code> with votes (<span class="math inline">\(1\)</span> if
+sample is a potential saccade, <span class="math inline">\(0\)</span>
+otherwise, you can also use logical values).</p>
 <div class="section level2">
 <h2 id="example-implementation">Example implementation<a class="anchor" aria-label="anchor" href="#example-implementation"></a>
 </h2>
