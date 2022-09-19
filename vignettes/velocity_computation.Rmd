@@ -28,7 +28,7 @@ This method computes velocity over a predefined time window controlled via `ek_v
 
 In general, horizontal and vertical velocity components are computed as
 $$v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}$$
-where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) that translates into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
+where $i$ is the index of a sample, $\Delta t = \frac{1}{sample~rate}$ is a duration of a single sampling frame, and $N$ is an _odd_ integer width of the moving average used to compute the velocity. In @EngbertKliegl2003, $N=5$ and $\Delta t = 4$ (250 Hz sampling rate) translate into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in @EngbertKliegl2003.  For $N=5$:
 $$\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=$$
 $$\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=$$
 
@@ -36,10 +36,10 @@ $$\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=$$
 $$\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}$$
 
 ## Differentiation following @NystromHolmqvist2010
-Horizontal and vertical components of velocity are computed from adjacent samples, the amplitude is computed from the components and then is filtered using [Savitzky-Golay filter](https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter). Filter order is controlled via `nh_sg_filter_order` option and defaults to `2`.
+Horizontal and vertical components of velocity are computed from adjacent samples, the amplitude is computed from the components and then is filtered using the [Savitzky-Golay filter](https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter). Filter order is controlled via `nh_sg_filter_order` option and defaults to `2`.
 
 ## Comparing two methods
-The two methods produce comparable but different velocity values. However, this has only a minor effect on saccade detection, see vignette on _Using sample votes_.
+The two methods produce comparable but different velocity values. However, this has only a minor effect on saccade detection, see a vignette on _Using sample votes_.
 
 ```{r warning=FALSE, fig.fullwidth=TRUE, out.width="100%", fig.dim = c(8, 4)}
 # computing velocity using two methods
@@ -96,7 +96,7 @@ Arguments that are passed to the function (all vectors have the same length):
 * `x`, `y` vectors with values, either x and y gaze coordinates or velocity components (for acceleration).
 * `sample_rate` scalar value in Hz.
 * `trial` vector with trial index per sample.
-* `options` a named list with method specific options. See example below for how to use them. See also `option_or_default()` function.
+* `options` a named list with method-specific options. See the example below for how to use them. See also `option_or_default()` function.
 
 The function must return a data.frame with three columns: `x` (horizontal component), `y` (vertical component), and `amp` (amplitude). 
 
@@ -121,7 +121,7 @@ diff_custom <- function(x, y,  trial, sample_rate, options=NULL) {
 }
 ```
 
-And here is a similar function but that uses an optional `custom_velocity_lag` parameter, so that it can be different from 1
+And here is a similar function but that uses an optional `custom_velocity_lag` parameter so that it can be different from 1
 ```{r eval = FALSE}
 diff_lag_n <- function(x, y,  trial, sample_rate, options=NULL) {
   # obtain lag or use default

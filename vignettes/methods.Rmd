@@ -15,18 +15,18 @@ knitr::opts_chunk$set(
 )
 ```
 
-The package implements following methods
+The package implements the following methods
 
 * @EngbertKliegl2003
 * @Otero-Millan2014
 * @NystromHolmqvist2010
 
-Each methods has additional parameters that can be passed via `options` argument of `extract_saccades()` function.
+Each method has additional parameters that can be passed via the `options` argument of the `extract_saccades()` function.
 
 ## @EngbertKliegl2003
-The algorithm labels a sample as a saccade if velocity, measured in units of its standard deviation (see below), exceeds a predefined threshold (defaults to $6$) and duration of a super-threshold period exceed a minimal duration (defaults to $12$ milliseconds). This method makes no assumptions about velocity in the units of degrees per second and can be used on any data (e.g., where samples encode gaze in screen position units).
+The algorithm labels a sample as a saccade if velocity, measured in units of its standard deviation (see below), exceeds a predefined threshold (defaults to $6$) and the duration of a super-threshold period exceeds a minimal duration (defaults to $12$ milliseconds). This method makes no assumptions about velocity in the units of degrees per second and can be used on any data (e.g., where samples encode gaze in screen position units).
 
-The standard deviation is computed following a formula #2 in @EngbertKliegl2003 as
+The standard deviation is computed following formula #2 in @EngbertKliegl2003 as
 ```r
 sqrt(median(x^2) - median(x)^2)
 ```
@@ -50,11 +50,11 @@ The algorithm:
 
 1. Detect local velocity peaks.
 2. Filter them based on a minimal inter-peak interval (defaults to $30$ ms) and maximal allowed saccade rate (defaults to $5$ Hz).
-3. Identify onset and offset of a potential saccade using an absolute velocity threshold in degrees per second (defaults to $3$).
+3. Identify the onset and offset of a potential saccade using an absolute velocity threshold in degrees per second (defaults to $3$).
 4. Compute peak velocity and peak acceleration before and after the peak velocity was reached.
 5. Rotate velocity and peak acceleration via PCA and retain components above a predefined threshold for explained variance (defaults to $0.05$).
-6. Perform a cluster analysis on remaining components for $2$, $3$, $4$ picking the solution with the smallest silhouette. 
-7. Saccades are identified as a cluster with highest average peak velocity.
+6. Perform a cluster analysis on the remaining components for $2$, $3$, and $4$ picking the solution with the smallest silhouette. 
+7. Saccades are identified as a cluster with the highest average peak velocity.
 
 For method details and rationale for default parameter values refer to @Otero-Millan2014.
 
@@ -70,7 +70,7 @@ Parameters:
 The algorithm:
 
 1. Identify physiologically implausible velocity and acceleration peaks (defaults to $1000 \deg/s$ and $100000 \deg/s^2$).
-2. Identify noise onset/offset as samples around the implausible velocity/acceleration that a above median velocity. Exluce these samples from analysis.
+2. Identify noise onset/offset as samples around the implausible velocity/acceleration that are above median velocity. Exclude these samples from analysis.
 3. Identify velocity threshold $PT = mean(V_{subthreshold}) + 6 \cdot std(V_{subthreshold})$ via an iterative method starting at arbitrary $PT$ value (defaults to $100 \deg/s$). Stop when threshold change is below $1 \deg/s$.
 4. Identify saccades as periods with peaks peaks above threshold $PT$ and adjacent samples that are above $PT_{onset/offset} = mean(V_{subthreshold}) + 3 \cdot std(V_{subthreshold})$.
 

@@ -1,6 +1,7 @@
 ---
 title: "Using Sample Votes"
 output: rmarkdown::html_vignette
+bibliography: methods.bib
 vignette: >
   %\VignetteIndexEntry{Using Sample Votes}
   %\VignetteEngine{knitr::rmarkdown}

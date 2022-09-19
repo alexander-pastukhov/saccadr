@@ -3,7 +3,7 @@
 
 Although there is an agreement about a general definition of a [saccade](https://en.wikipedia.org/wiki/Saccade), the more specific details are harder to agree upon. Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity, acceleration, etc. The package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see _Implemented Methods_ vignette) but can be extended via custom methods (see _Using custom methods_ vignette). It also uses a modular approach to compute velocity and acceleration from noisy samples (see _Velocity computation_ vignette). Finally, you can obtain methods votes per gaze sample instead of saccades (see _Using sample votes_ vignette).
 
-The `extract_saccades()` function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration and minimal time between the saccades. For binocular data, samples can be averaged _before_ velocity computation, votes can be merged so that methods returns binocular saccades, or saccades are extracted for each eye separately.
+The `extract_saccades()` function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration and minimal time between the saccades. For binocular data, 1) samples can be averaged _before_ velocity computation, 2) votes can be merged so that function returns binocular saccades, or 3) saccades are extracted for each eye separately.
 
 Currently, the library implements saccade detection using on the following saccade detection methods. When using this package, please cite both the package and individual methods.
 
@@ -20,7 +20,7 @@ install_github("alexander-pastukhov/saccadr", dependencies=TRUE)
 ```
 
 ## Usage
-The main function is `extract_saccades()`. Minimally, it  takes x and y gaze samples, and sampling rate returning a table with extracted saccades. Note that the function expects that units of the gaze samples are \strong{degrees of visual angle}, as some methods use physiologically plausible velocity and acceleration thresholds.
+The main function is `extract_saccades()`. Minimally, it  takes x and y gaze samples, and sampling rate returning a table with extracted saccades. Note that the function expects that units of the gaze samples are **degrees of visual angle**, as some methods use physiologically plausible velocity and acceleration thresholds.
 ```r
 data("single_trial")
 saccades <- extract_saccades(single_trial$x, single_trial$y, sample_rate = 500)
@@ -40,11 +40,11 @@ saccades <- extract_saccades(monocular_ten_trials$x
 
 ### Binocular data
 
-There are three ways in which binocular data can be treated based on the value of `binocular` parameter:
+There are three ways in which binocular data can be treated based on the value of the `binocular` parameter:
 
-* `binocular = "merge"` (default): sample votes are obtained from both eyes and for all methods and then averaged. This way only binocular saccades (i.e., eye movements with a sufficient temporal overlap between eyes) are detected. `Eye = "Binocular"` in saccade description.
-* `binocular = "cyclopean"` : binocular data is converted to an average cyclopean image before voting and saccades detection. `Eye = "Cyclopean"` in saccade description.
-* `binocular = "monocular"` : saccades are extracted independently for each eye. `Eye = "Left"` or `Eye = "Right"` in saccade description.
+* `binocular = "merge"` (default): sample votes are obtained from both eyes and for all methods and then averaged. This way only binocular saccades (i.e., eye movements with sufficient temporal overlap between eyes) are detected. `Eye = "Binocular"` in saccade description.
+* `binocular = "cyclopean"`: binocular data is converted to an average cyclopean image before voting and saccades detection. `Eye = "Cyclopean"` in saccade description.
+* `binocular = "monocular"`: saccades are extracted independently for each eye. `Eye = "Left"` or `Eye = "Right"` in saccade description.
 
 ```r
 data("single_trial_binocular")
@@ -77,7 +77,7 @@ saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = meth
 saccades <- extract_saccades(single_trial$x, single_trial$y, 500, methods = list(method_ek, method_om))
 ```
 
-Individual methods have their own parameters that are passed via `options` argument, which is a named list with `<parameter-name> = <value>` pairs. You can find information on specific parameters and their default values in _Implemented Methods_ vignette. Here is an example of modifying a velocity threshold, measured in units of standard deviation, for Engbert & Kliegl (2003) method. The default value is 6 but we can make it stricter
+Parameters for individual methods are passed via the `options` argument, which is a named list with `<parameter-name> = <value>` pairs. You can find information on specific parameters and their default values in _Implemented Methods_ vignette. Here is an example of modifying a velocity threshold, measured in units of standard deviation, for Engbert & Kliegl (2003) method. The default value is 6 but we can make it stricter
 
 ```r
 saccades <- extract_saccades(single_trial$x, single_trial$y, 500, options = list("ek_velocity_threshold" = 8))

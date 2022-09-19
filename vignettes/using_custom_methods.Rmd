@@ -30,15 +30,15 @@ custom_saccade_voting_method <- function(x,
 }
 ```
 
-Arguments that are passed to the function (all vectors / tables have the same length / number of rows):
+Arguments that are passed to the function (all vectors/tables have the same length/number of rows):
 
 * `x`, `y` vectors with _monocular_ samples (either for one of the eyes or cyclopean). On the one hand, you can assume that samples are in degrees of visual angle as the package users are warned that using non-standard units may invalidate some internally implemented methods. On the other hand, as you are implementing a custom method for your own data, you can treat them in the units you see fit (input vectors `x` and `y` are not transformed but for averaging in case of cyclopean data).
 * `vel` and `acc` are data frames with velocity and acceleration samples. Each table has columns `x` (horizontal component), `y` (vertical component), and `amp` (amplitude). See below for details on velocity computation.
 * `sample_rate` scalar value in Hz.
 * `trial` vector with trial index per sample.
-* `options` a named list with method specific options. See example below for how to use them. See also `option_or_default()` function.
+* `options` a named list with method-specific options. See the example below for how to use them. See also `option_or_default()` function.
 
-Your function must return a vector of the same length as `x` with votes ($1$ samples belongs to a saccade, $0$ not a saccade, you can also use logical values).
+Your function must return a vector of the same length as `x` with votes ($1$ if sample is a potential saccade, $0$ otherwise, you can also use logical values).
 
 ## Example implementation
 Here is an example implementation of an overly simple custom method that labels a sample as a saccade if its velocity exceeds a predefined threshold. It expects the threshold parameter as `"st_velocity_threshold"` member of the list and uses a default threshold of $50 \deg / s$ (an arbitrary number!) if no threshold was provided.
