@@ -4,12 +4,13 @@ tags:
 - R
 - eye tracking
 - saccades
+- ensemble method
 date: "18 September 2022"
 output:
-  word_document: default
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
+  word_document: default
 authors:
 - name: Alexander Pastukhov
   orcid: 0000-0002-8738-8591
