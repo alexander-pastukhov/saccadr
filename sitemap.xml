@@ -4,9 +4,6 @@
     <loc>https://alexander-pastukhov.github.io/saccadr/404.html</loc>
   </url>
   <url>
-    <loc>https://alexander-pastukhov.github.io/saccadr/LICENSE.html</loc>
-  </url>
-  <url>
     <loc>https://alexander-pastukhov.github.io/saccadr/articles/index.html</loc>
   </url>
   <url>
@@ -26,6 +23,9 @@
   </url>
   <url>
     <loc>https://alexander-pastukhov.github.io/saccadr/index.html</loc>
+  </url>
+  <url>
+    <loc>https://alexander-pastukhov.github.io/saccadr/LICENSE.html</loc>
   </url>
   <url>
     <loc>https://alexander-pastukhov.github.io/saccadr/reference/compute_velocity_ek.html</loc>

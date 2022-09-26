@@ -68,7 +68,8 @@
 
 
 
-<script src="velocity_computation_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Velocity computation</h1>
             
@@ -79,23 +80,66 @@
 
     
     
-<p>Because the gaze samples tend to be noisy, different methods use various approaches for computing velocity from noisy samples. Methods by <span class="citation">Engbert and Kliegl (2003)</span> and <span class="citation">Otero-Millan et al. (2014)</span> used the same approach based on averaging over multiple samples to compute velocity, whereas <span class="citation">Nyström and Holmqvist (2010)</span> compute a simple derivative and then filter it. By default, package uses the former approach (<code>velocity_function = diff_ek</code>) but you can also use the latter (<code>velocity_function = diff_nh</code>) or implement a custom method (see below). Acceleration is computed the same way but from velocity samples.</p>
+<p>Because the gaze samples tend to be noisy, different methods use
+various approaches for computing velocity from noisy samples. Methods by
+<span class="citation">Engbert and Kliegl (2003)</span> and <span class="citation">Otero-Millan et al. (2014)</span> used the same
+approach based on averaging over multiple samples to compute velocity,
+whereas <span class="citation">Nyström and Holmqvist (2010)</span>
+compute a simple derivative and then filter it. By default, package uses
+the former approach (<code>velocity_function = diff_ek</code>) but you
+can also use the latter (<code>velocity_function = diff_nh</code>) or
+implement a custom method (see below). Acceleration is computed the same
+way but from velocity samples.</p>
 <div class="section level2">
-<h2 id="differentiation-following-engbertkliegl2003">Differentiation following <span class="citation">Engbert and Kliegl (2003)</span><a class="anchor" aria-label="anchor" href="#differentiation-following-engbertkliegl2003"></a>
+<h2 id="differentiation-following-engbertkliegl2003">Differentiation following <span class="citation">Engbert and Kliegl
+(2003)</span><a class="anchor" aria-label="anchor" href="#differentiation-following-engbertkliegl2003"></a>
 </h2>
-<p>This method computes velocity over a predefined time window controlled via <code>ek_velocity_time_window</code> that defaults to 20 ms. The width of the window is converted to samples based on the <code>sampling_rate</code> parameter and is ensured to be an <em>odd</em> number equal to or larger than 3. I.e., for a window that is three samples long, the velocity is computed based on one sample before and one sample after the current, for a five-samples window - two samples before and after, etc. The code always starts with the requested window size but all iteratively reduces it by two samples to accommodate for trial limits and missing values. An <code>NA</code> velocity is returned only if even the smallest window (three samples wide) cannot be used.</p>
-<p>In general, horizontal and vertical velocity components are computed as <span class="math display">\[v_x[i] = \frac{\sum_{j=1}^{(N-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}\]</span> where <span class="math inline">\(i\)</span> is the index of a sample, <span class="math inline">\(\Delta t = \frac{1}{sample~rate}\)</span> is a duration of a single sampling frame, and <span class="math inline">\(N\)</span> is an <em>odd</em> integer width of the moving average used to compute the velocity. In <span class="citation">Engbert and Kliegl (2003)</span>, <span class="math inline">\(N=5\)</span> and <span class="math inline">\(\Delta t = 4\)</span> (250 Hz sampling rate) translate into a 20 ms moving average window (default value used in the method implementation). Below is a derivation that shows the equivalence of the formula above to formula 1 in <span class="citation">Engbert and Kliegl (2003)</span>. For <span class="math inline">\(N=5\)</span>: <span class="math display">\[\frac{\sum_{j=1}^{(5-1)/2}x[i+j] - x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=\]</span> <span class="math display">\[\frac{\sum_{j=1}^{2}x[i+j] - x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=\]</span></p>
-<p><span class="math display">\[\frac{x[i+1] - x[i-1]+x[i+2] - x[i-2]}{2\Delta t + 4\Delta t}=\]</span> <span class="math display">\[\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta t}\]</span></p>
+<p>This method computes velocity over a predefined time window
+controlled via <code>ek_velocity_time_window</code> that defaults to 20
+ms. The width of the window is converted to samples based on the
+<code>sampling_rate</code> parameter and is ensured to be an
+<em>odd</em> number equal to or larger than 3. I.e., for a window that
+is three samples long, the velocity is computed based on one sample
+before and one sample after the current, for a five-samples window - two
+samples before and after, etc. The code always starts with the requested
+window size but all iteratively reduces it by two samples to accommodate
+for trial limits and missing values. An <code>NA</code> velocity is
+returned only if even the smallest window (three samples wide) cannot be
+used.</p>
+<p>In general, horizontal and vertical velocity components are computed
+as <span class="math display">\[v_x[i] =
+\frac{\sum_{j=1}^{(N-1)/2}x[i+j] -
+x[i-j]}{\sum_{j=1}^{(N-1)/2}2j\cdot\Delta t}\]</span> where <span class="math inline">\(i\)</span> is the index of a sample, <span class="math inline">\(\Delta t = \frac{1}{sample~rate}\)</span> is a
+duration of a single sampling frame, and <span class="math inline">\(N\)</span> is an <em>odd</em> integer width of the
+moving average used to compute the velocity. In <span class="citation">Engbert and Kliegl (2003)</span>, <span class="math inline">\(N=5\)</span> and <span class="math inline">\(\Delta t = 4\)</span> (250 Hz sampling rate)
+translate into a 20 ms moving average window (default value used in the
+method implementation). Below is a derivation that shows the equivalence
+of the formula above to formula 1 in <span class="citation">Engbert and
+Kliegl (2003)</span>. For <span class="math inline">\(N=5\)</span>:
+<span class="math display">\[\frac{\sum_{j=1}^{(5-1)/2}x[i+j] -
+x[i-j]}{\sum_{j=1}^{(5-1)/2}2j\cdot\Delta t}=\]</span> <span class="math display">\[\frac{\sum_{j=1}^{2}x[i+j] -
+x[i-j]}{\sum_{j=1}^{2}2j\cdot\Delta t}=\]</span></p>
+<p><span class="math display">\[\frac{x[i+1] - x[i-1]+x[i+2] -
+x[i-2]}{2\Delta t + 4\Delta t}=\]</span> <span class="math display">\[\frac{x[i+2] + x[i+1] - x[i-1] - x[i-2]}{6\Delta
+t}\]</span></p>
 </div>
 <div class="section level2">
-<h2 id="differentiation-following-nystromholmqvist2010">Differentiation following <span class="citation">Nyström and Holmqvist (2010)</span><a class="anchor" aria-label="anchor" href="#differentiation-following-nystromholmqvist2010"></a>
+<h2 id="differentiation-following-nystromholmqvist2010">Differentiation following <span class="citation">Nyström and
+Holmqvist (2010)</span><a class="anchor" aria-label="anchor" href="#differentiation-following-nystromholmqvist2010"></a>
 </h2>
-<p>Horizontal and vertical components of velocity are computed from adjacent samples, the amplitude is computed from the components and then is filtered using the <a href="https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter" class="external-link">Savitzky-Golay filter</a>. Filter order is controlled via <code>nh_sg_filter_order</code> option and defaults to <code>2</code>.</p>
+<p>Horizontal and vertical components of velocity are computed from
+adjacent samples, the amplitude is computed from the components and then
+is filtered using the <a href="https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter" class="external-link">Savitzky-Golay
+filter</a>. Filter order is controlled via
+<code>nh_sg_filter_order</code> option and defaults to
+<code>2</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="comparing-two-methods">Comparing two methods<a class="anchor" aria-label="anchor" href="#comparing-two-methods"></a>
 </h2>
-<p>The two methods produce comparable but different velocity values. However, this has only a minor effect on saccade detection, see a vignette on <em>Using sample votes</em>.</p>
+<p>The two methods produce comparable but different velocity values.
+However, this has only a minor effect on saccade detection, see a
+vignette on <em>Using sample votes</em>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># computing velocity using two methods</span></span>
 <span><span class="va">vel_ek</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="../reference/diff_ek.html">diff_ek</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>,</span>
@@ -135,30 +179,37 @@
 <h2 id="implementing-and-using-a-custom-differentiation-function">Implementing and using a custom differentiation function<a class="anchor" aria-label="anchor" href="#implementing-and-using-a-custom-differentiation-function"></a>
 </h2>
 <p>A custom function should be as a follows</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>diff_custom &lt;-<span class="st"> </span><span class="cf">function</span>(x, y,  trial, sample_rate, <span class="dt">options=</span><span class="ot">NULL</span>) {</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  <span class="co"># compute vertical and horizontal components</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>  df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">x =</span> ..., <span class="co"># differentiate values of x </span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>                   <span class="dt">y =</span> ...) <span class="co"># differentiate values of y</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>  </span>
-<span id="cb3-6"><a href="#cb3-6"></a>  <span class="co"># compute amplitude</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a>  df[[<span class="st">'amp'</span>]] =<span class="st"> </span><span class="kw">sqrt</span>(df[[<span class="st">'x'</span>]]<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>df[[<span class="st">'y'</span>]]<span class="op">^</span><span class="dv">2</span>)<span class="er">)</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a></span>
-<span id="cb3-9"><a href="#cb3-9"></a>  <span class="co"># return a data.frame with columns x, y, and amp</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a>  <span class="kw">return</span>(df)</span>
-<span id="cb3-11"><a href="#cb3-11"></a>}</span></code></pre></div>
-<p>Arguments that are passed to the function (all vectors have the same length):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diff_custom <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y,  trial, sample_rate, <span class="at">options=</span><span class="cn">NULL</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute vertical and horizontal components</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> ..., <span class="co"># differentiate values of x </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> ...) <span class="co"># differentiate values of y</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute amplitude</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  df[[<span class="st">'amp'</span>]] <span class="ot">=</span> <span class="fu">sqrt</span>(df[[<span class="st">'x'</span>]]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> df[[<span class="st">'y'</span>]]<span class="sc">^</span><span class="dv">2</span>)<span class="er">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return a data.frame with columns x, y, and amp</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Arguments that are passed to the function (all vectors have the same
+length):</p>
 <ul>
 <li>
-<code>x</code>, <code>y</code> vectors with values, either x and y gaze coordinates or velocity components (for acceleration).</li>
+<code>x</code>, <code>y</code> vectors with values, either x and y
+gaze coordinates or velocity components (for acceleration).</li>
 <li>
 <code>sample_rate</code> scalar value in Hz.</li>
 <li>
 <code>trial</code> vector with trial index per sample.</li>
 <li>
-<code>options</code> a named list with method-specific options. See the example below for how to use them. See also <code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
+<code>options</code> a named list with method-specific options. See
+the example below for how to use them. See also
+<code><a href="../reference/option_or_default.html">option_or_default()</a></code> function.</li>
 </ul>
-<p>The function must return a data.frame with three columns: <code>x</code> (horizontal component), <code>y</code> (vertical component), and <code>amp</code> (amplitude).</p>
-<p>Here is an example of a simple velocity function that respects trial borders</p>
+<p>The function must return a data.frame with three columns:
+<code>x</code> (horizontal component), <code>y</code> (vertical
+component), and <code>amp</code> (amplitude).</p>
+<p>Here is an example of a simple velocity function that respects trial
+borders</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
@@ -177,7 +228,9 @@
 <span>           y <span class="op">=</span> <span class="op">(</span><span class="va">y</span> <span class="op">-</span> <span class="fu">lag</span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="va">delta_t_s</span>,</span>
 <span>           amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">y</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>And here is a similar function but that uses an optional <code>custom_velocity_lag</code> parameter so that it can be different from 1</p>
+<p>And here is a similar function but that uses an optional
+<code>custom_velocity_lag</code> parameter so that it can be different
+from 1</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diff_lag_n</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>,  <span class="va">trial</span>, <span class="va">sample_rate</span>, <span class="va">options</span><span class="op">=</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># obtain lag or use default</span></span>
@@ -199,17 +252,23 @@
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-EngbertKliegl2003">
-<p>Engbert, Ralf, and Reinhold Kliegl. 2003. “Microsaccades uncover the orientation of covert attention.” <em>Vision Research</em> 43 (9): 1035–45. <a href="https://doi.org/10.1016/S0042-6989(03)00084-1" class="external-link">https://doi.org/10.1016/S0042-6989(03)00084-1</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-EngbertKliegl2003" class="csl-entry">
+Engbert, Ralf, and Reinhold Kliegl. 2003. <span>“<span class="nocase">Microsaccades uncover the orientation of covert
+attention</span>.”</span> <em>Vision Research</em> 43 (9): 1035–45. <a href="https://doi.org/10.1016/S0042-6989(03)00084-1" class="external-link">https://doi.org/10.1016/S0042-6989(03)00084-1</a>.
 </div>
-<div id="ref-NystromHolmqvist2010">
-<p>Nyström, Marcus, and Kenneth Holmqvist. 2010. “An adaptive algorithm for fixation, saccade, and glissade detection in eyetracking data.” <em>Behavior Research Methods</em> 42 (1): 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link">https://doi.org/10.3758/BRM.42.1.188</a>.</p>
+<div id="ref-NystromHolmqvist2010" class="csl-entry">
+Nyström, Marcus, and Kenneth Holmqvist. 2010. <span>“<span class="nocase">An adaptive algorithm for fixation, saccade, and glissade
+detection in eyetracking data</span>.”</span> <em>Behavior Research
+Methods</em> 42 (1): 188–204. <a href="https://doi.org/10.3758/BRM.42.1.188" class="external-link">https://doi.org/10.3758/BRM.42.1.188</a>.
 </div>
-<div id="ref-Otero-Millan2014">
-<p>Otero-Millan, J., Jose L Alba Castro, Stephen L Macknik, and S. Martinez-Conde. 2014. “Unsupervised clustering method to detect microsaccades.” <em>Journal of Vision</em> 14 (2): 18–18. <a href="https://doi.org/10.1167/14.2.18" class="external-link">https://doi.org/10.1167/14.2.18</a>.</p>
+<div id="ref-Otero-Millan2014" class="csl-entry">
+Otero-Millan, J., Jose L Alba Castro, Stephen L Macknik, and S.
+Martinez-Conde. 2014. <span>“<span class="nocase">Unsupervised
+clustering method to detect microsaccades</span>.”</span> <em>Journal of
+Vision</em> 14 (2): 18–18. <a href="https://doi.org/10.1167/14.2.18" class="external-link">https://doi.org/10.1167/14.2.18</a>.
 </div>
 </div>
 </div>

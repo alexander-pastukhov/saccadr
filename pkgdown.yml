@@ -1,4 +1,4 @@
-pandoc: 2.7.3
+pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
@@ -6,7 +6,7 @@ articles:
   using_custom_methods: using_custom_methods.html
   using_sample_votes: using_sample_votes.html
   velocity_computation: velocity_computation.html
-last_built: 2022-09-20T09:32Z
+last_built: 2022-09-26T10:49Z
 urls:
   reference: https://alexander-pastukhov.github.io/saccadr/reference
   article: https://alexander-pastukhov.github.io/saccadr/articles

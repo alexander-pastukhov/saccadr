@@ -83,6 +83,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="saccadr">saccadr<a class="anchor" aria-label="anchor" href="#saccadr"></a>
 </h1></div>
+<!-- badges: start -->
+
 <p><strong>saccadr</strong> is a modular and extendable R package to extract (micro)saccades from gaze samples via an ensemble of methods approach.</p>
 <p>Although there is an agreement about a general definition of a <a href="https://en.wikipedia.org/wiki/Saccade" class="external-link">saccade</a>, the more specific details are harder to agree upon. Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity, acceleration, etc. The package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see <em>Implemented Methods</em> vignette) but can be extended via custom methods (see <em>Using custom methods</em> vignette). It also uses a modular approach to compute velocity and acceleration from noisy samples (see <em>Velocity computation</em> vignette). Finally, you can obtain methods votes per gaze sample instead of saccades (see <em>Using sample votes</em> vignette).</p>
 <p>The <code><a href="reference/extract_saccades.html">extract_saccades()</a></code> function uses several methods to label individual samples as belonging to a saccade, classifies a sample as a potential saccade if its proportion of votes exceeds a preset threshold, and then identifies saccades based on minimal saccade duration and minimal time between the saccades. For binocular data, 1) samples can be averaged <em>before</em> velocity computation, 2) votes can be merged so that function returns binocular saccades, or 3) saccades are extracted for each eye separately.</p>
@@ -101,27 +103,30 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>To install from github</p>
+<p>For current stable version use</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"saccadr"</span><span class="op">)</span></span></code></pre></div>
+<p>To install the development version from github</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span></span>
-<span><span class="fu">install_github</span><span class="op">(</span><span class="st">"alexander-pastukhov/saccadr"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"alexander-pastukhov/saccadr"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
 <p>The main function is <code><a href="reference/extract_saccades.html">extract_saccades()</a></code>. Minimally, it takes x and y gaze samples, and sampling rate returning a table with extracted saccades. Note that the function expects that units of the gaze samples are <strong>degrees of visual angle</strong>, as some methods use physiologically plausible velocity and acceleration thresholds.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial"</span><span class="op">)</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, sample_rate <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="multiple-trials">Multiple trials<a class="anchor" aria-label="anchor" href="#multiple-trials"></a>
 </h3>
 <p>When the recording spans multiple trials, you need to specify this via <code>trial</code> parameter. This way velocity computation and saccade detection methods respect trial boundaries.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">data</span>(monocular_ten_trials)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>saccades &lt;-<span class="st"> </span><span class="kw">extract_saccades</span>(monocular_ten_trials<span class="op">$</span>x</span>
-<span id="cb3-3"><a href="#cb3-3"></a>                             monocular_ten_trials<span class="op">$</span>y, </span>
-<span id="cb3-4"><a href="#cb3-4"></a>                             <span class="dv">500</span>,</span>
-<span id="cb3-5"><a href="#cb3-5"></a>                             <span class="dt">trial =</span> monocular_ten_trials<span class="op">$</span>trial)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(monocular_ten_trials)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>saccades <span class="ot">&lt;-</span> <span class="fu">extract_saccades</span>(monocular_ten_trials<span class="sc">$</span>x</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             monocular_ten_trials<span class="sc">$</span>y, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="dv">500</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trial =</span> monocular_ten_trials<span class="sc">$</span>trial)</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="binocular-data">Binocular data<a class="anchor" aria-label="anchor" href="#binocular-data"></a>
@@ -135,7 +140,7 @@
 <li>
 <code>binocular = "monocular"</code>: saccades are extracted independently for each eye. <code>Eye = "Left"</code> or <code>Eye = "Right"</code> in saccade description.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"single_trial_binocular"</span><span class="op">)</span></span>
 <span><span class="co"># binocular saccades only</span></span>
 <span><span class="va">saccades_b</span> <span class="op">&lt;-</span> <span class="fu">saccadr</span><span class="fu">::</span><span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial_binocular</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xL'</span>, <span class="st">'xR'</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -158,21 +163,21 @@
 <h3 id="specifying-methods">Specifying methods<a class="anchor" aria-label="anchor" href="#specifying-methods"></a>
 </h3>
 <p>By default, all implemented methods are used for saccade detection but, if necessary, you can use their subset or even a single method. Note that you can also supply your own saccade detection function, please see <em>Using custom methods</em> vignette.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using a single method</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, methods <span class="op">=</span> <span class="va">method_om</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Using two methods</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">method_ek</span>, <span class="va">method_om</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Parameters for individual methods are passed via the <code>options</code> argument, which is a named list with <code>&lt;parameter-name&gt; = &lt;value&gt;</code> pairs. You can find information on specific parameters and their default values in <em>Implemented Methods</em> vignette. Here is an example of modifying a velocity threshold, measured in units of standard deviation, for Engbert &amp; Kliegl (2003) method. The default value is 6 but we can make it stricter</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ek_velocity_threshold"</span> <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="altering-voting-threshold">Altering voting threshold<a class="anchor" aria-label="anchor" href="#altering-voting-threshold"></a>
 </h3>
 <p>The voting threshold is the number of methods that must label a sample as a potential saccade. By default, all but one method must agree for a sample to be considered for a saccade (<code>vote_threshold = length(methods) - 1</code>) but is 1, if only a single method was passed to the function. You can make voting more or less restrictive via <code>vote_threshold</code> parameter.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A strict unanimous decision threshold</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, vote_threshold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
@@ -183,14 +188,14 @@
 <h3 id="specifying-velocity-computation-method">Specifying velocity computation method<a class="anchor" aria-label="anchor" href="#specifying-velocity-computation-method"></a>
 </h3>
 <p>Because the gaze samples tend to be noisy, different methods use various approaches for computing velocity from noisy samples. Methods by Engbert &amp; Kliegl (2003) and Otero-Millan et al. (2014) used the same approach based on averaging over multiple samples to compute velocity, whereas Nyström &amp; Holmqvist (2010) compute a simple derivative and then filter it. By default, package uses the former approach (<code>velocity_function = diff_ek</code>) but you can also use the latter (<code>velocity_function = diff_nh</code>) or implement a custom method (see <em>Velocity computation</em> vignette). Acceleration is computed the same way but from velocity samples. Here is an example of using Nyström &amp; Holmqvist (2010) velocity computation</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, velocity_function <span class="op">=</span> <span class="va">diff_nh</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="specifying-saccade-temporal-properties">Specifying saccade temporal properties<a class="anchor" aria-label="anchor" href="#specifying-saccade-temporal-properties"></a>
 </h3>
 <p>Once the votes are in, saccades detection is based on their minimal duration (<code>minimal_duration_ms</code> parameter, defaults to 12 ms) and minimal time between the saccades (<code>minimal_separation_ms</code>, defaults to 12 ms).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only longish saccades are extracted</span></span>
 <span><span class="va">saccades</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_saccades.html">extract_saccades</a></span><span class="op">(</span><span class="va">single_trial</span><span class="op">$</span><span class="va">x</span>, <span class="va">single_trial</span><span class="op">$</span><span class="va">y</span>, <span class="fl">500</span>, minimal_duration_ms <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -257,6 +262,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=saccadr" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/alexander-pastukhov/saccadr/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/alexander-pastukhov/saccadr/issues/" class="external-link">Report a bug</a></li>
 </ul>
@@ -286,7 +292,13 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://doi.org/10.5281/zenodo.7096235" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7096235.svg" alt="DOI"></a></li>
+<li><a href="https://cran.r-project.org/package=saccadr" class="external-link"><img src="https://www.r-pkg.org/badges/version/saccadr" alt="CRAN status"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
