@@ -1,4 +1,14 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
 # saccadr
+<!-- badges: start -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7096235.svg)](https://doi.org/10.5281/zenodo.7096235)
+[![CRAN status](https://www.r-pkg.org/badges/version/saccadr)](https://cran.r-project.org/package=saccadr)
+<!-- badges: end -->
+
 **saccadr** is a modular and extendable R package to extract (micro)saccades from gaze samples via an ensemble of methods approach.
 
 Although there is an agreement about a general definition of a [saccade](https://en.wikipedia.org/wiki/Saccade), the more specific details are harder to agree upon. Therefore, there are numerous algorithms that extract saccades based on various heuristics, which differ in the assumptions about velocity, acceleration, etc. The package uses these methods to label individual samples and then applies a majority vote approach to identify saccades. The package includes three methods (see _Implemented Methods_ vignette) but can be extended via custom methods (see _Using custom methods_ vignette). It also uses a modular approach to compute velocity and acceleration from noisy samples (see _Velocity computation_ vignette). Finally, you can obtain methods votes per gaze sample instead of saccades (see _Using sample votes_ vignette).
@@ -12,8 +22,13 @@ Currently, the library implements saccade detection using on the following sacca
 * `method_nh` : Nyström, M., & Holmqvist, K. (2010). An adaptive algorithm for fixation, saccade, and glissade detection in eye tracking data. Behavior Research Methods, 42(1), 188–204. https://doi.org/10.3758/BRM.42.1.188
 
 ## Installation
-To install from github
 
+For current stable version use
+```r
+install.packages("saccadr")
+```
+
+To install the development version from github
 ```r
 library("devtools")
 install_github("alexander-pastukhov/saccadr", dependencies=TRUE)
