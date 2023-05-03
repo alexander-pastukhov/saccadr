@@ -89,6 +89,15 @@ method_nh <- function(x,
   
   # --- identifying velocity threshold via iterative adjustment
   all_samples <- unnest(samples, cols = c("data"))
+  
+  # sanity check
+  ibelow <- (all_samples$is_good) & (all_samples$vel < initial_velocity_threshold)
+  if (sum(ibelow) == 0) {
+    warning("Method NH: No velocity samples below default threshold. Wrong units?")
+    return(ibelow)
+  }
+  
+  # iterative part
   newPT <- initial_velocity_threshold
   PT <- 2 * newPT
   while(abs(newPT - PT) > 1){
