@@ -285,6 +285,12 @@ extract_saccades <- function(x,
     # retaining only potential saccades that are longer than minimal required duration
     potential_saccades <- rle(remarked_samples)
     potential_saccades$values <- potential_saccades$values == TRUE & potential_saccades$lengths >= minimal_duration_in_samples
+    
+    if ((length(potential_saccades$values) == 1) & (potential_saccades$values[1] == FALSE)) {
+      # special case, no saccades, create an empty table
+      eye_saccades[[iEye]] <- data.frame()
+      next
+    }
 
     eye_saccades[[iEye]] <-
       # turn rle into a table
