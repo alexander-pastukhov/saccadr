@@ -157,6 +157,9 @@ method_om <- function(x,
   saccade_properties <- apply(saccade_properties, MARGIN = 2, scale)
   ivalid <-  which(rowSums(is.na(saccade_properties)) == 0)
   
+  # special case, no saccades
+  if (sum(ivalid) == 0) return(rep(FALSE, length(x)))
+  
   # --- performing PCA
   saccade_pca <- prcomp(saccade_properties[ivalid, ])
   important_components <- 1:2 # which(summary(saccade_pca)$importance[2,]>pca_variance_threshold)
