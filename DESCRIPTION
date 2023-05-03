@@ -1,8 +1,8 @@
 Package: saccadr
 Type: Package
 Title: Extract Saccades via an Ensemble of Methods Approach
-Version: 0.1.1
-Date: 2022-09-18
+Version: 0.1.2
+Date: 2023-05-03
 Authors@R:
   person(given = "Alexander",
          family = "Pastukhov",
