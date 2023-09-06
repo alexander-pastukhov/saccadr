@@ -1,4 +1,4 @@
-#' Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}
+#' Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18}
 #' 
 #' @details Method options, please refer to Otero-Millan et al. (2014) for details on parameters and the rationale for default values.
 #' \itemize{

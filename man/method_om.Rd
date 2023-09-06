@@ -2,7 +2,7 @@
 % Please edit documentation in R/method_om.R
 \name{method_om}
 \alias{method_om}
-\title{Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}}
+\title{Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18}}
 \usage{
 method_om(x, y, vel, acc, sample_rate, trial, options)
 }
@@ -25,7 +25,7 @@ method_om(x, y, vel, acc, sample_rate, trial, options)
 logical vector marking samples that belong to saccades
 }
 \description{
-Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18.}
+Extract saccades using an algorithm proposed by Otero-Millan et al. (2014) \doi{10.1167/14.2.18}
 }
 \details{
 Method options, please refer to Otero-Millan et al. (2014) for details on parameters and the rationale for default values.
